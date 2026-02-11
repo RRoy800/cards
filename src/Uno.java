@@ -5,13 +5,13 @@ import processing.core.PApplet;
 public class Uno {
     // Player turns
     boolean playerOneTurn = true;
-    
+
     // Decks and hands
     ArrayList<UnoCard> deck;
     Hand playerOneHand;
     Hand playerTwoHand;
     ArrayList<UnoCard> discardPile;
-    
+
     // Game state
     UnoCard lastPlayedCard;
     boolean gameActive;
@@ -20,22 +20,22 @@ public class Uno {
     boolean choosingWildColor = false;
     UnoCard pendingWildCard;
     ClickableRectangle[] wildColorButtons;
-    String[] wildColors = {"Red", "Yellow", "Green", "Blue"};
+    String[] wildColors = { "Red", "Yellow", "Green", "Blue" };
     int wildButtonSize = 24;
     int wildCenterX = 300;
     int wildCenterY = 300;
-    
+
     // UI
     ClickableRectangle drawButton;
     int drawButtonX = 250;
     int drawButtonY = 400;
     int drawButtonWidth = 100;
     int drawButtonHeight = 35;
-    
+
     public Uno() {
         initializeGame();
     }
-    
+
     public void initializeGame() {
         // Initialize decks and hands
         deck = new ArrayList<>();
@@ -44,11 +44,11 @@ public class Uno {
         playerTwoHand = new Hand();
         computerPlayer = new UnoComputer();
         gameActive = true;
-        
+
         // Create deck (Uno has 108 cards)
-        String[] colors = {"Red", "Yellow", "Green", "Blue"};
-        String[] values = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "Skip", "Reverse", "Draw Two"};
-        
+        String[] colors = { "Red", "Yellow", "Green", "Blue" };
+        String[] values = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "Skip", "Reverse", "Draw Two" };
+
         // Create standard cards (2 of each color/value combination except 0)
         for (String color : colors) {
             deck.add(createCard(color, "0")); // One 0 card per color
@@ -59,16 +59,17 @@ public class Uno {
                 }
             }
         }
-        
+
         // Add wild cards (4 of each type)
         for (int i = 0; i < 4; i++) {
+            // suit, value
             deck.add(createCard("Wild", "Wild"));
             deck.add(createCard("Wild", "Draw Four"));
         }
-        
+
         // Shuffle deck
         Collections.shuffle(deck);
-        
+
         // Deal 7 cards to each player
         for (int i = 0; i < 7; i++) {
             playerOneHand.addCard(deck.remove(0));
@@ -76,11 +77,11 @@ public class Uno {
             card.setTurned(true);
             playerTwoHand.addCard(card);
         }
-        
+
         // Place first card on discard pile
         lastPlayedCard = deck.remove(0);
         discardPile.add(lastPlayedCard);
-        
+
         // Initialize draw button
         drawButton = new ClickableRectangle();
         drawButton.x = drawButtonX;
@@ -92,18 +93,20 @@ public class Uno {
         playerTwoHand.positionCards(50, 50, 80, 120, 20);
         initializeWildColorButtons();
     }
-    
+
     private UnoCard createCard(String suit, String value) {
         UnoCard card = new UnoCard(suit, value); // Image loading can be added later
         card.suit = suit;
         card.value = value;
         return card;
     }
+
     public void switchTurns() {
         playerOneTurn = !playerOneTurn;
         playerOneHand.positionCards(50, 450, 80, 120, 20);
         playerTwoHand.positionCards(50, 50, 80, 120, 20);
-    }   
+    }
+
     public void drawCard(Hand hand) {
         if (!deck.isEmpty()) {
             hand.addCard(deck.remove(0));
@@ -116,14 +119,14 @@ public class Uno {
                 discardPile.clear();
                 discardPile.add(lastPlayedCard);
                 Collections.shuffle(deck);
-                
+
                 if (!deck.isEmpty()) {
                     hand.addCard(deck.remove(0));
                 }
             }
         }
     }
-    
+
     public boolean playCard(UnoCard card, Hand hand) {
         // Check if card is valid to play
         if (isValidPlay(card)) {
@@ -137,19 +140,20 @@ public class Uno {
             switchTurns();
             return true;
         }
+        System.out.println("Invalid play: " + card.value + " of " + card.suit);
         return false;
     }
-    
+
     private boolean isValidPlay(UnoCard card) {
         // Wild cards are always valid
         if (card.suit.equals("Wild")) {
             return true;
         }
         // Card must match suit or value of last played card
-        return card.suit.equals(lastPlayedCard.suit) || 
-               card.value.equals(lastPlayedCard.value);
+        return card.suit.equals(lastPlayedCard.suit) ||
+                card.value.equals(lastPlayedCard.value);
     }
-    
+
     public void handleDrawButtonClick(int mouseX, int mouseY) {
         if (choosingWildColor) {
             return;
@@ -161,23 +165,23 @@ public class Uno {
             handleComputerTurn();
         }
     }
-    
+
     public UnoCard getLastPlayedCard() {
         return lastPlayedCard;
     }
-    
+
     public Hand getCurrentPlayerHand() {
         return playerOneTurn ? playerOneHand : playerTwoHand;
     }
-    
+
     public String getCurrentPlayer() {
         return playerOneTurn ? "Player One" : "Player Two";
     }
-    
+
     public int getDeckSize() {
         return deck.size();
     }
-    
+
     public int getDiscardPileSize() {
         return discardPile.size();
     }
@@ -200,18 +204,18 @@ public class Uno {
                 break;
             }
         }
-
         if (clickedCard == null) {
             return;
         }
-
+        // this is for the first time
         if (selectedCard == null) {
             selectedCard = clickedCard;
             selectedCard.setSelected(true, raiseAmount);
             return;
         }
-
+        // this is the second time
         if (clickedCard == selectedCard) {
+            System.out.println("playing card: " + selectedCard.value + " of " + selectedCard.suit);
             if ("Wild".equals(selectedCard.suit)) {
                 pendingWildCard = selectedCard;
                 choosingWildColor = true;
@@ -267,8 +271,9 @@ public class Uno {
         int raiseAmount = 15;
         for (int i = 0; i < wildColorButtons.length; i++) {
             if (wildColorButtons[i].isClicked(mouseX, mouseY)) {
-                pendingWildCard.suit = wildColors[i];
                 if (playCard(pendingWildCard, playerOneHand)) {
+                    // Set the wild card's suit to the chosen color AFTER it is validated
+                    pendingWildCard.suit = wildColors[i];
                     pendingWildCard.setSelected(false, raiseAmount);
                     selectedCard = null;
                     pendingWildCard = null;
@@ -316,11 +321,10 @@ public class Uno {
             return;
         }
 
-        if ("Wild".equals(choice.suit)) {
-            choice.suit = computerPlayer.chooseComputerWildColor(playerTwoHand);
-        }
-        
         if (playCard((UnoCard) choice, playerTwoHand)) {
+            if ("Wild".equals(choice.suit)) {
+                choice.suit = computerPlayer.chooseComputerWildColor(playerTwoHand);
+            }
             playerOneHand.positionCards(50, 450, 80, 120, 20);
             playerTwoHand.positionCards(50, 50, 80, 120, 20);
         } else {

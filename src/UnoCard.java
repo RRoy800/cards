@@ -1,15 +1,8 @@
 import processing.core.PApplet;
 
 public class UnoCard extends Card {
-    public UnoCard(String suit, String value) {
-        super(suit, value);
-    }
-
-    // select wild color 
-    public void setWildColor(String color) {
-        if ("Wild".equals(suit)) {
-            this.suit = color;
-        }
+    public UnoCard(String value, String suit) {
+        super(value, suit);
     }
 
     @Override

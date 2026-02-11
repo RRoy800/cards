@@ -28,17 +28,13 @@ public class UnoComputer {
 	public String chooseComputerWildColor(Hand hand) {
 		// make hashmap to count colors
 		HashMap<String, Integer> colorCount = new HashMap<>();
-		colorCount.put("Red", 0);
-		colorCount.put("Yellow", 0);
-		colorCount.put("Green", 0);
-		colorCount.put("Blue", 0);
 
         for (int i = 0; i < hand.getSize(); i++) {
             Card card = hand.getCard(i);
             if (card == null) {
                 continue;
             }
-            colorCount.put(card.suit, colorCount.get(card.suit) + 1);
+            colorCount.put(card.suit, colorCount.getOrDefault(card.suit, 0) + 1);
         }
         // find color with most cards
         String best = "Red";
