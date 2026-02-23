@@ -11,11 +11,51 @@ public class TexasHoldem extends CardGame {
     private int dealernumcards = 5;
     Hand centerCards;
     int playerturn = 0;
+    private int numturns = 0;
+    int playerMoney;
+    int computerMoney;
+    int potMoney;
+
+    ClickableRectangle checkButton;
+    ClickableRectangle raiseButton;
+    ClickableRectangle callButton;
+    ClickableRectangle foldButton;
+    int ButtonX = 170;
+    int startButtonY = 420;
+    int buttonSpacer = 40;
+    int ButtonWidth = 100;
+    int ButtonHeight = 35;
 
     public TexasHoldem() {
         initializeGame();
-        dealCards(2);
 
+        checkButton = new ClickableRectangle();
+        checkButton.x = ButtonX;
+        checkButton.y = startButtonY;
+        checkButton.width = ButtonWidth;
+        checkButton.height = ButtonHeight;
+
+        callButton = new ClickableRectangle();
+        callButton.x = ButtonX;
+        callButton.y = startButtonY + buttonSpacer;
+        callButton.width = ButtonWidth;
+        callButton.height = ButtonHeight;
+
+        raiseButton = new ClickableRectangle();
+        raiseButton.x = ButtonX;
+        raiseButton.y = startButtonY + 2 * buttonSpacer;
+        raiseButton.width = ButtonWidth;
+        raiseButton.height = ButtonHeight;
+
+        foldButton = new ClickableRectangle();
+        foldButton.x = ButtonX;
+        foldButton.y = startButtonY + 3 * buttonSpacer;
+        foldButton.width = ButtonWidth;
+        foldButton.height = ButtonHeight;
+
+        dealCards(2);
+        playerMoney = 1000;
+        computerMoney = 1000;
         playerOneHand.positionCards(50, 450, 80, 120, 20);
         playerTwoHand.positionCards(500, 450, 80, 120, 20);
         dealer.positionCards(50, 50, 80, 120, 20);
@@ -54,7 +94,6 @@ public class TexasHoldem extends CardGame {
         gameActive = true;
 
         createDeck();
-      
 
     }
 
@@ -78,47 +117,92 @@ public class TexasHoldem extends CardGame {
 
     @Override
     public void handleComputerTurn() {
-        //TODO: add logic here
+        // TODO: add logic here
+        switchTurns();
+    }
+
+    public void handleplayerTurn() {
+        // TODO: add logic here
         switchTurns();
     }
 
     public void handledealerTurn() {
-        Card card = dealer.getCard(0);
-        card.setTurned(false);
-        playCard(card, dealer);
-        //TODO: Make it so multiple cards can be played depending on the turn
+        if (numturns == 0) {
+            for (int i = 0; i < 3; i++) {
+                Card card = dealer.getCard(0);
+                card.setTurned(false);
+                playCard(card, dealer);
+            }
+        } else {
+            Card card = dealer.getCard(0);
+            card.setTurned(false);
+            playCard(card, dealer);
+        }
+        numturns = numturns + 1;
         switchTurns();
     }
 
     @Override
-     public boolean playCard(Card card, Hand hand) {
-     if (super.playCard(card, hand)){
-        centerCards.addCard(card);
+    public boolean playCard(Card card, Hand hand) {
+        hand.removeCard(card);
         card.setTurned(false);
+        discardPile.add(card);
+        centerCards.addCard(card);
         return true;
-     }
-     return false;
+    }
 
-     }
-
-     @Override
+    @Override
     public void switchTurns() {
-    playerturn += 1 % 3;
-    playerOneHand.positionCards(50, 450, 80, 120, 20);
-    playerTwoHand.positionCards(50, 50, 80, 120, 20);
-    dealer.positionCards(50, 50, 80, 120, 20);
-    centerCards.positionCards(200, 200, 80, 120, 90);
+        playerturn = (playerturn + 1) % 3;
+        playerOneHand.positionCards(50, 450, 80, 120, 20);
+        playerTwoHand.positionCards(500, 450, 80, 120, 20);
+        dealer.positionCards(50, 50, 80, 120, 20);
+        centerCards.positionCards(200, 200, 80, 120, 90);
     }
 
     @Override
     public String getCurrentPlayer() {
-        if (playerturn == 2){
+        if (playerturn == 0) {
             return "Player One";
-        }else if (playerturn == 0){
+        } else if (playerturn == 1) {
             return "Player Two";
-        }else 
+        } else
             return "Dealer";
-        
+
+    }
+
+    // TODO: Button logic
+    public void handleCheckButtonClick(int mouseX, int mouseY) {
+        if (checkButton.isClicked(mouseX, mouseY) && getCurrentPlayer().equals("Player One")) {
+            playerMoney -= 10;
+            potMoney += 10;
+            switchTurns();
+        }
+
+    }
+
+    public void handleFoldButtonClick(int mouseX, int mouseY) {
+        if (foldButton.isClicked(mouseX, mouseY) && getCurrentPlayer().equals("Player One")) {
+
+            switchTurns();
+        }
+
+    }
+
+    public void handleCallButtonClick(int mouseX, int mouseY) {
+        if (callButton.isClicked(mouseX, mouseY) && getCurrentPlayer().equals("Player One")) {
+
+            switchTurns();
+        }
+
+    }
+
+    public void handleRaiseButtonClick(int mouseX, int mouseY) {
+        if (raiseButton.isClicked(mouseX, mouseY) && getCurrentPlayer().equals("Player One")) {
+
+            switchTurns();
+        }
+
     }
 
 }
