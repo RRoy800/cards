@@ -95,6 +95,7 @@ public class TexasHoldem extends CardGame {
         dealer = new Hand();
         gameActive = true;
 
+        numturns = 0;
         createDeck();
         dealCards(2);
 
