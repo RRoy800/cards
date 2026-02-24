@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 
 import processing.core.PApplet;
 
@@ -15,6 +16,10 @@ public class TexasHoldem extends CardGame {
     int playerMoney;
     int computerMoney;
     int potMoney;
+    Random r;
+    int computerBid;
+    Random z;
+    int willcomputerbid;
 
     ClickableRectangle checkButton;
     ClickableRectangle raiseButton;
@@ -53,12 +58,9 @@ public class TexasHoldem extends CardGame {
         foldButton.width = ButtonWidth;
         foldButton.height = ButtonHeight;
 
-        dealCards(2);
         playerMoney = 1000;
         computerMoney = 1000;
-        playerOneHand.positionCards(50, 450, 80, 120, 20);
-        playerTwoHand.positionCards(500, 450, 80, 120, 20);
-        dealer.positionCards(50, 50, 80, 120, 20);
+
     }
 
     @Override
@@ -94,6 +96,11 @@ public class TexasHoldem extends CardGame {
         gameActive = true;
 
         createDeck();
+        dealCards(2);
+
+        playerOneHand.positionCards(50, 450, 80, 120, 20);
+        playerTwoHand.positionCards(500, 450, 80, 120, 20);
+        dealer.positionCards(50, 50, 80, 120, 20);
 
     }
 
@@ -117,11 +124,22 @@ public class TexasHoldem extends CardGame {
 
     @Override
     public void handleComputerTurn() {
-        // TODO: add logic here
-        switchTurns();
+        z = new Random(); // TODO: Make it so this prints what the Computer is doing
+        willcomputerbid = z.nextInt(4);
+        if (willcomputerbid >= 1) {
+            r = new Random();
+            computerBid = r.nextInt(11);
+            computerMoney = computerMoney - computerBid;
+            potMoney = potMoney + computerBid;
+
+            switchTurns();
+            switchTurns();
+        } else {
+            switchTurns();
+        }
     }
 
-    public void handleplayerTurn() {
+    public void handleplayerTurn() { // Not Used
         // TODO: add logic here
         switchTurns();
     }
@@ -174,25 +192,31 @@ public class TexasHoldem extends CardGame {
     // TODO: Button logic
     public void handleCheckButtonClick(int mouseX, int mouseY) {
         if (checkButton.isClicked(mouseX, mouseY) && getCurrentPlayer().equals("Player One")) {
-            playerMoney -= 10;
-            potMoney += 10;
-            switchTurns();
+            if (computerBid == 0) {
+                switchTurns();
+            }
         }
 
     }
 
     public void handleFoldButtonClick(int mouseX, int mouseY) {
         if (foldButton.isClicked(mouseX, mouseY) && getCurrentPlayer().equals("Player One")) {
-
-            switchTurns();
+            computerMoney += potMoney;
+            potMoney = 0;
+            initializeGame();
         }
 
     }
 
     public void handleCallButtonClick(int mouseX, int mouseY) {
         if (callButton.isClicked(mouseX, mouseY) && getCurrentPlayer().equals("Player One")) {
-
-            switchTurns();
+            if (computerBid > 0) {
+                playerMoney = playerMoney - computerBid;
+                potMoney = potMoney + computerBid;
+                computerBid = 0;
+                switchTurns();
+                switchTurns();
+            }
         }
 
     }
