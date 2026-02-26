@@ -1,7 +1,11 @@
+import java.util.HashMap;
+
 import processing.core.PApplet;
+import processing.core.PImage;
 
 public class TexasHoldemApp extends PApplet {
-    TexasHoldem cardGame = new TexasHoldem();
+    TexasHoldem cardGame;
+    HashMap<String, PImage> cardImages = new HashMap<>();
     private int timer;
 
     public static void main(String[] args) {
@@ -11,12 +15,18 @@ public class TexasHoldemApp extends PApplet {
     @Override
     public void settings() {
         size(1000, 600);
+        for(String rank : TexasHoldem.Rank){
+            for(String suit : TexasHoldem.Suit){
+                cardImages.put(rank + suit.toLowerCase(), loadImage("Data/" + rank + suit.toLowerCase() + ".png"));
+            }
+        }
+        cardImages.put("cardback", loadImage("Data/cardback.png"));
+        cardGame = new TexasHoldem(cardImages);
     }
 
     @Override
     public void draw() {
-        background(255);
-
+        background(0, 122, 24);
         // check button
         fill(200);
         cardGame.checkButton.draw(this);

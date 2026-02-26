@@ -1,8 +1,8 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Random;
-
-import processing.core.PApplet;
+import processing.core.PImage;
 
 public class TexasHoldem extends CardGame {
 
@@ -30,10 +30,12 @@ public class TexasHoldem extends CardGame {
     int buttonSpacer = 40;
     int ButtonWidth = 100;
     int ButtonHeight = 35;
+    HashMap<String, PImage> cardImages;
 
-    public TexasHoldem() {
+    public TexasHoldem(HashMap<String, PImage> cardImages) {
+        this.cardImages = cardImages;
         initializeGame();
-
+     
         checkButton = new ClickableRectangle();
         checkButton.x = ButtonX;
         checkButton.y = startButtonY;
@@ -78,7 +80,7 @@ public class TexasHoldem extends CardGame {
     }
 
     private Card createCard(String suit, String rank) {
-        Card card = new Card(suit, rank);
+        Card card = new TexasHoldemCard(suit, rank, cardImages.get(rank + suit.toLowerCase()), cardImages.get("cardback"));
         card.suit = suit;
         card.value = rank;
         return card;
@@ -87,6 +89,9 @@ public class TexasHoldem extends CardGame {
 
     @Override
     protected void initializeGame() {
+        if(cardImages == null){
+            return;
+        }
         deck = new ArrayList<>();
         discardPile = new ArrayList<>();
         playerOneHand = new Hand();
@@ -107,6 +112,9 @@ public class TexasHoldem extends CardGame {
 
     @Override
     protected void dealCards(int numCards) {
+        if(cardImages == null){
+            return;
+        }
         Collections.shuffle(deck);
         for (int i = 0; i < numCards; i++) {
             playerOneHand.addCard(deck.remove(0));
@@ -141,7 +149,6 @@ public class TexasHoldem extends CardGame {
     }
 
     public void handleplayerTurn() { // Not Used
-        // TODO: add logic here
         switchTurns();
     }
 
@@ -190,7 +197,6 @@ public class TexasHoldem extends CardGame {
 
     }
 
-    // TODO: Button logic
     public void handleCheckButtonClick(int mouseX, int mouseY) {
         if (checkButton.isClicked(mouseX, mouseY) && getCurrentPlayer().equals("Player One")) {
             if (computerBid == 0) {
@@ -224,7 +230,11 @@ public class TexasHoldem extends CardGame {
 
     public void handleRaiseButtonClick(int mouseX, int mouseY) {
         if (raiseButton.isClicked(mouseX, mouseY) && getCurrentPlayer().equals("Player One")) {
-
+            
+            //keep track of players current bet
+            //add + and - button
+            //handle plus, check if its players turn, if possible increase of decrase by incriment of five adn incriment of 1 (if you have enough money)
+            //
             switchTurns();
         }
 
