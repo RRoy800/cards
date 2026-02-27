@@ -231,6 +231,9 @@ public class TexasHoldem extends CardGame {
     public void handleRaiseButtonClick(int mouseX, int mouseY) {
         if (raiseButton.isClicked(mouseX, mouseY) && getCurrentPlayer().equals("Player One")) {
             
+
+
+            
             //keep track of players current bet
             //add + and - button
             //handle plus, check if its players turn, if possible increase of decrase by incriment of five adn incriment of 1 (if you have enough money)
