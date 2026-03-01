@@ -15,8 +15,8 @@ public class TexasHoldemApp extends PApplet {
     @Override
     public void settings() {
         size(1000, 600);
-        for(String rank : TexasHoldem.Rank){
-            for(String suit : TexasHoldem.Suit){
+        for (String rank : TexasHoldem.Rank) {
+            for (String suit : TexasHoldem.Suit) {
                 cardImages.put(rank + suit.toLowerCase(), loadImage("Data/" + rank + suit.toLowerCase() + ".png"));
             }
         }
@@ -44,6 +44,22 @@ public class TexasHoldemApp extends PApplet {
         text("Call", cardGame.callButton.x + cardGame.callButton.width / 2,
                 cardGame.callButton.y + cardGame.callButton.height / 2);
 
+        if (cardGame.adjustingRaise) {
+            fill(200);
+            cardGame.plusButton.draw(this);
+            cardGame.minusButton.draw(this);
+            cardGame.confirmRaiseButton.draw(this);
+
+            fill(0);
+            text("+", cardGame.plusButton.x + cardGame.plusButton.width / 2,
+                    cardGame.plusButton.y + cardGame.plusButton.height / 2);
+            text("-", cardGame.minusButton.x + cardGame.minusButton.width / 2,
+                    cardGame.minusButton.y + cardGame.minusButton.height / 2);
+            text("Bet $" + cardGame.raiseAmount,
+                    cardGame.confirmRaiseButton.x + cardGame.confirmRaiseButton.width / 2,
+                    cardGame.confirmRaiseButton.y + cardGame.confirmRaiseButton.height / 2);
+        }
+
         // Draw player hands
         text("You have $" + cardGame.playerMoney, 50, 590);
         for (int i = 0; i < cardGame.playerOneHand.getSize(); i++) {
@@ -62,7 +78,7 @@ public class TexasHoldemApp extends PApplet {
         }
 
         // draw dealer hand
-         text("The Pot has $" + cardGame.potMoney, 500, 110);
+        text("The Pot has $" + cardGame.potMoney, 500, 110);
         for (int i = 0; i < cardGame.dealer.getSize(); i++) {
             Card card = cardGame.dealer.getCard(i);
             if (card != null) {
@@ -106,7 +122,7 @@ public class TexasHoldemApp extends PApplet {
 
         cardGame.drawChoices(this);
     }
-     
+
     @Override
     public void mousePressed() {
         cardGame.handleCheckButtonClick(mouseX, mouseY);
