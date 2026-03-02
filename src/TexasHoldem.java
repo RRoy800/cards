@@ -37,6 +37,7 @@ public class TexasHoldem extends CardGame {
     ClickableRectangle plusButton;
     ClickableRectangle minusButton;
     ClickableRectangle confirmRaiseButton;
+    boolean isGameOver;
 
     int raiseAmount = 5;
     boolean adjustingRaise = false;
@@ -91,7 +92,7 @@ public class TexasHoldem extends CardGame {
         confirmRaiseButton.height = 40;
         confirmRaiseButton.x = plusButton.x + 50;
         confirmRaiseButton.y = plusButton.y - 100;
-        //
+    
     }
 
     @Override
@@ -137,6 +138,7 @@ public class TexasHoldem extends CardGame {
         playerOneHand.positionCards(50, 450, 80, 120, 20);
         playerTwoHand.positionCards(500, 450, 80, 120, 20);
         dealer.positionCards(50, 50, 80, 120, 20);
+        isGameOver = false;
 
     }
 
@@ -164,13 +166,13 @@ public class TexasHoldem extends CardGame {
     @Override
     public void handleComputerTurn() {
         if (currentPlayerBet > 0) {
-            int callAmount = Math.min(currentPlayerBet, computerMoney); 
+            int callAmount = Math.min(currentPlayerBet, computerMoney); //TODO: set a new variable to equal 
             computerMoney -= callAmount;
             potMoney += callAmount;
             currentPlayerBet = 0;
             switchTurns();
         } else {
-            z = new Random(); // TODO: Make it so this prints what the Computer is doing
+            z = new Random(); 
             willcomputerbid = z.nextInt(6);
             if (willcomputerbid >= 1) {
                 r = new Random();
@@ -207,13 +209,38 @@ public class TexasHoldem extends CardGame {
                 card.setTurned(false);
                 playCard(card, dealer);
             }
-        } else {
+            numturns = numturns + 1;
+            switchTurns();
+        } else if (numturns == 1 || numturns == 2 ){
             Card card = dealer.getCard(0);
             card.setTurned(false);
             playCard(card, dealer);
+            numturns = numturns + 1;
+            switchTurns();
+        }else{
+            isGameOver = true;
+            return;
         }
-        numturns = numturns + 1;
-        switchTurns();
+
+    }
+
+    public boolean IsGameOver(){
+        return isGameOver; 
+    }
+
+    public String getWinner(){
+        ArrayList<Card> playeronefinalhand = new ArrayList<>();
+        playeronefinalhand.addAll(playerOneHand.getCards());
+        playeronefinalhand.addAll(centerCards.getCards());
+        ArrayList<Card> playertwofinalhand = new ArrayList<>();
+        playertwofinalhand.addAll(playerTwoHand.getCards());
+        playertwofinalhand.addAll(centerCards.getCards());
+        PokerHandEvaluator.HandResult playeroneresults = PokerHandEvaluator.evaluate(playeronefinalhand);
+        PokerHandEvaluator.HandResult playertworesults = PokerHandEvaluator.evaluate(playertwofinalhand);
+        if(playeroneresults.compareTo(playertworesults) < 0){
+           return "Player Two";
+        }
+        return "Player One";
     }
 
     @Override

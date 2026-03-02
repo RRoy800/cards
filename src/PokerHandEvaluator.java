@@ -1,10 +1,10 @@
-import java.util.*;
+import java.util.*; //This Hand Evalutor was written by the Google AI Overview
 
 public class PokerHandEvaluator {
 
     public static class HandResult implements Comparable<HandResult> {
-        int rank;                 // category strength
-        List<Integer> tiebreak;   // high cards for comparison
+        int rank;
+        List<Integer> tiebreak;   
 
         public HandResult(int rank, List<Integer> tiebreak) {
             this.rank = rank;

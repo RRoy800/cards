@@ -26,6 +26,73 @@ public class TexasHoldemApp extends PApplet {
 
     @Override
     public void draw() {
+        if (!cardGame.IsGameOver()) {
+            drawscreen();
+
+            if (cardGame.getCurrentPlayer().equals("Player Two")) {
+                fill(0);
+                textSize(16);
+                text("Computer is thinking...", width / 2 - 80, height / 2 + 80);
+                timer++;
+                if (timer == 100) {
+                    cardGame.handleComputerTurn();
+                    timer = 0;
+                }
+            }
+
+            if (cardGame.getCurrentPlayer().equals("Dealer")) {
+                fill(0);
+                textSize(16);
+                text("Dealer is thinking...", width / 2 - 80, height / 2 + 80);
+                timer++;
+                if (timer == 100) {
+                    cardGame.handledealerTurn();
+                    timer = 0;
+                }
+            }
+            cardGame.drawChoices(this);
+
+        } else {
+            for (int i = 0; i < cardGame.playerTwoHand.getSize(); i++) {
+                Card card = cardGame.playerTwoHand.getCard(i);
+                card.setTurned(false);
+
+            }
+
+            timer++;
+            if (timer == 200) {
+                cardGame.handledealerTurn();
+                String winner = cardGame.getWinner();
+                drawscreen();
+                fill(0);
+                textSize(20);
+                text("The Winner is " + winner + "!", width / 2 - 80, height / 2 + 80);
+            }
+            if (timer == 400) {
+                String winner = cardGame.getWinner();
+                if (winner.equals("Player One")) {
+                    cardGame.playerMoney += cardGame.potMoney;
+                    cardGame.potMoney = 0;
+                } else {
+                    cardGame.computerMoney += cardGame.potMoney;
+                    cardGame.potMoney = 0;
+
+                }
+                timer = 0;
+                cardGame.initializeGame(); //TODO: Add button for this
+            }
+        }
+    }
+
+    @Override
+    public void mousePressed() {
+        cardGame.handleCheckButtonClick(mouseX, mouseY);
+        cardGame.handleFoldButtonClick(mouseX, mouseY);
+        cardGame.handleRaiseButtonClick(mouseX, mouseY);
+        cardGame.handleCallButtonClick(mouseX, mouseY);
+    }
+
+    public void drawscreen() {
         background(0, 122, 24);
         // check button
         fill(200);
@@ -93,42 +160,5 @@ public class TexasHoldemApp extends PApplet {
                 card.draw(this);
             }
         }
-
-        // Display deck size
-        text("Deck Size: " + cardGame.getDeckSize(), 500,
-                10);
-
-        if (cardGame.getCurrentPlayer().equals("Player Two")) {
-            fill(0);
-            textSize(16);
-            text("Computer is thinking...", width / 2 - 80, height / 2 + 80);
-            timer++;
-            if (timer == 100) {
-                cardGame.handleComputerTurn();
-                timer = 0;
-            }
-        }
-
-        if (cardGame.getCurrentPlayer().equals("Dealer")) {
-            fill(0);
-            textSize(16);
-            text("Dealer is thinking...", width / 2 - 80, height / 2 + 80);
-            timer++;
-            if (timer == 100) {
-                cardGame.handledealerTurn();
-                timer = 0;
-            }
-        }
-
-        cardGame.drawChoices(this);
     }
-
-    @Override
-    public void mousePressed() {
-        cardGame.handleCheckButtonClick(mouseX, mouseY);
-        cardGame.handleFoldButtonClick(mouseX, mouseY);
-        cardGame.handleRaiseButtonClick(mouseX, mouseY);
-        cardGame.handleCallButtonClick(mouseX, mouseY);
-    }
-
 }
