@@ -32,10 +32,19 @@ public class TexasHoldem extends CardGame {
     int ButtonHeight = 35;
     HashMap<String, PImage> cardImages;
 
+    ClickableRectangle plusButton;
+    ClickableRectangle minusButton;
+    ClickableRectangle confirmRaiseButton;
+
+    int raiseAmount = 5;
+    boolean adjustingRaise = false;
+    int raiseIncrement = 5;
+    int currentPlayerBet = 0;
+
     public TexasHoldem(HashMap<String, PImage> cardImages) {
         this.cardImages = cardImages;
         initializeGame();
-     
+
         checkButton = new ClickableRectangle();
         checkButton.x = ButtonX;
         checkButton.y = startButtonY;
@@ -63,6 +72,25 @@ public class TexasHoldem extends CardGame {
         playerMoney = 1000;
         computerMoney = 1000;
 
+        //
+        plusButton = new ClickableRectangle();
+        plusButton.width = 40;
+        plusButton.height = 40;
+        plusButton.x = ButtonX + ButtonWidth + 10;
+        plusButton.y = raiseButton.y;
+
+        minusButton = new ClickableRectangle();
+        minusButton.width = 40;
+        minusButton.height = 40;
+        minusButton.x = ButtonX + ButtonWidth + 10;
+        minusButton.y = raiseButton.y + 50;
+
+        confirmRaiseButton = new ClickableRectangle();
+        confirmRaiseButton.width = 100;
+        confirmRaiseButton.height = 40;
+        confirmRaiseButton.x = plusButton.x + 50;
+        confirmRaiseButton.y = plusButton.y - 100;
+        //
     }
 
     @Override
@@ -80,7 +108,8 @@ public class TexasHoldem extends CardGame {
     }
 
     private Card createCard(String suit, String rank) {
-        Card card = new TexasHoldemCard(suit, rank, cardImages.get(rank + suit.toLowerCase()), cardImages.get("cardback"));
+        Card card = new TexasHoldemCard(suit, rank, cardImages.get(rank + suit.toLowerCase()),
+                cardImages.get("cardback"));
         card.suit = suit;
         card.value = rank;
         return card;
@@ -89,7 +118,7 @@ public class TexasHoldem extends CardGame {
 
     @Override
     protected void initializeGame() {
-        if(cardImages == null){
+        if (cardImages == null) {
             return;
         }
         deck = new ArrayList<>();
@@ -112,7 +141,7 @@ public class TexasHoldem extends CardGame {
 
     @Override
     protected void dealCards(int numCards) {
-        if(cardImages == null){
+        if (cardImages == null) {
             return;
         }
         Collections.shuffle(deck);
@@ -133,18 +162,26 @@ public class TexasHoldem extends CardGame {
 
     @Override
     public void handleComputerTurn() {
-        z = new Random(); // TODO: Make it so this prints what the Computer is doing
-        willcomputerbid = z.nextInt(4);
-        if (willcomputerbid >= 1) {
-            r = new Random();
-            computerBid = r.nextInt(11);
-            computerMoney = computerMoney - computerBid;
-            potMoney = potMoney + computerBid;
-
-            switchTurns();
+        if (currentPlayerBet > 0) {
+            int callAmount = Math.min(currentPlayerBet, computerMoney);
+            computerMoney -= callAmount;
+            potMoney += callAmount;
+            currentPlayerBet = 0;
             switchTurns();
         } else {
-            switchTurns();
+            z = new Random(); // TODO: Make it so this prints what the Computer is doing
+            willcomputerbid = z.nextInt(4);
+            if (willcomputerbid >= 1) {
+                r = new Random();
+                computerBid = 1 + r.nextInt(30);
+                computerMoney = computerMoney - computerBid;
+                potMoney = potMoney + computerBid;
+
+                switchTurns();
+                switchTurns();
+            } else {
+                switchTurns();
+            }
         }
     }
 
@@ -159,14 +196,40 @@ public class TexasHoldem extends CardGame {
                 card.setTurned(false);
                 playCard(card, dealer);
             }
-        } else {
+            numturns = numturns + 1;
+            switchTurns();
+        } else if (numturns == 1 || numturns == 2 ){
             Card card = dealer.getCard(0);
             card.setTurned(false);
             playCard(card, dealer);
+            numturns = numturns + 1;
+            switchTurns();
+        }else{
+            getWinner();
+            if(getWinner() == "player"){
+            playerMoney = playerMoney + potMoney;
+            potMoney = 0;
+            switchTurns();
+            initializeGame(); 
+            }else if(getWinner() == "computer"){
+            computerMoney = computerMoney + potMoney;
+            potMoney = 0;
+            switchTurns();
+            initializeGame(); 
+            }
         }
-        numturns = numturns + 1;
-        switchTurns();
+
     }
+
+    public String getWinner(){ //TODO: Make this actually do something, maybe use hand evaluater 
+        if(true){ //Must also show the computer cards
+        return "comupter";
+        }else{
+        return "player";
+        }
+    }
+
+
 
     @Override
     public boolean playCard(Card card, Hand hand) {
@@ -209,6 +272,7 @@ public class TexasHoldem extends CardGame {
     public void handleFoldButtonClick(int mouseX, int mouseY) {
         if (foldButton.isClicked(mouseX, mouseY) && getCurrentPlayer().equals("Player One")) {
             computerMoney += potMoney;
+            adjustingRaise = false;
             potMoney = 0;
             initializeGame();
         }
@@ -217,7 +281,7 @@ public class TexasHoldem extends CardGame {
 
     public void handleCallButtonClick(int mouseX, int mouseY) {
         if (callButton.isClicked(mouseX, mouseY) && getCurrentPlayer().equals("Player One")) {
-            if (computerBid > 0) {
+            if (computerBid > 0 && playerMoney >= computerBid) {
                 playerMoney = playerMoney - computerBid;
                 potMoney = potMoney + computerBid;
                 computerBid = 0;
@@ -230,17 +294,30 @@ public class TexasHoldem extends CardGame {
 
     public void handleRaiseButtonClick(int mouseX, int mouseY) {
         if (raiseButton.isClicked(mouseX, mouseY) && getCurrentPlayer().equals("Player One")) {
-            
-
-
-            
-            //keep track of players current bet
-            //add + and - button
-            //handle plus, check if its players turn, if possible increase of decrase by incriment of five adn incriment of 1 (if you have enough money)
-            //
-            switchTurns();
+            adjustingRaise = true;
         }
 
+        if (adjustingRaise) {
+
+            if (plusButton.isClicked(mouseX, mouseY) && playerMoney >= raiseAmount + raiseIncrement) {
+                raiseAmount += raiseIncrement;
+            }
+
+            if (minusButton.isClicked(mouseX, mouseY) && raiseAmount - raiseIncrement >= 5) {
+                raiseAmount -= raiseIncrement;
+            }
+
+            if (confirmRaiseButton.isClicked(mouseX, mouseY)) {
+                if (playerMoney >= raiseAmount) {
+                    currentPlayerBet = raiseAmount;
+                    playerMoney -= raiseAmount;
+                    potMoney += raiseAmount;
+                    adjustingRaise = false;
+                    raiseAmount = 5;
+                    switchTurns();
+                }
+            }
+        }
     }
 
 }

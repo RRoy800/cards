@@ -31,7 +31,7 @@ public class CardGame {
 
     protected void initializeGame() {
         // Initialize draw button
-        drawButton = new ClickableRectangle();
+        drawButton = new ClickableRectangle(); 
         drawButton.x = drawButtonX;
         drawButton.y = drawButtonY;
         drawButton.width = drawButtonWidth;
