@@ -19,7 +19,9 @@ public class TexasHoldem extends CardGame {
     Random r;
     int computerBid;
     Random z;
+    Random x;
     int willcomputerbid;
+    int willcomputerfold;
 
     ClickableRectangle checkButton;
     ClickableRectangle raiseButton;
@@ -36,9 +38,9 @@ public class TexasHoldem extends CardGame {
     ClickableRectangle minusButton;
     ClickableRectangle confirmRaiseButton;
 
-    int raiseAmount = 5; 
-    boolean adjustingRaise = false; 
-    int raiseIncrement = 5; 
+    int raiseAmount = 5;
+    boolean adjustingRaise = false;
+    int raiseIncrement = 5;
     int currentPlayerBet = 0;
 
     public TexasHoldem(HashMap<String, PImage> cardImages) {
@@ -72,11 +74,10 @@ public class TexasHoldem extends CardGame {
         playerMoney = 1000;
         computerMoney = 1000;
 
-        //
         plusButton = new ClickableRectangle();
         plusButton.width = 40;
         plusButton.height = 40;
-        plusButton.x = ButtonX + ButtonWidth + 10; 
+        plusButton.x = ButtonX + ButtonWidth + 10;
         plusButton.y = raiseButton.y;
 
         minusButton = new ClickableRectangle();
@@ -170,7 +171,7 @@ public class TexasHoldem extends CardGame {
             switchTurns();
         } else {
             z = new Random(); // TODO: Make it so this prints what the Computer is doing
-            willcomputerbid = z.nextInt(4);
+            willcomputerbid = z.nextInt(6);
             if (willcomputerbid >= 1) {
                 r = new Random();
                 computerBid = 1 + r.nextInt(30);
@@ -180,7 +181,17 @@ public class TexasHoldem extends CardGame {
                 switchTurns();
                 switchTurns();
             } else {
-                switchTurns();
+                x = new Random();
+                willcomputerfold = x.nextInt(3);
+                if (willcomputerbid >= 2) {
+                    switchTurns();
+                } else {
+                    playerMoney += potMoney;
+                    potMoney = 0;
+                    switchTurns();
+                    switchTurns();
+                    initializeGame();
+                }
             }
         }
     }
