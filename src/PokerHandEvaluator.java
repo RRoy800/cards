@@ -1,4 +1,4 @@
-import java.util.*; //This Hand Evalutor was written by the Google AI Overview
+import java.util.*; //This Hand Evalutor was written by the Google AI Overview - the source was a reddit feed which I can no longer find
 
 public class PokerHandEvaluator {
 
