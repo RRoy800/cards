@@ -68,7 +68,7 @@ public class TexasHoldemApp extends PApplet {
                 textSize(20);
                 text("The Winner is " + winner + "!", width / 2 - 80, height / 2 + 80);
             }
-            if (timer == 400) {
+            if (timer == 600) {
                 String winner = cardGame.getWinner();
                 if (winner.equals("Player One")) {
                     cardGame.playerMoney += cardGame.potMoney;

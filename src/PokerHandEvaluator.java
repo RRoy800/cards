@@ -4,11 +4,15 @@ public class PokerHandEvaluator {
 
     public static class HandResult implements Comparable<HandResult> {
         int rank;
-        List<Integer> tiebreak;   
+        List<Integer> tiebreak;
 
         public HandResult(int rank, List<Integer> tiebreak) {
             this.rank = rank;
             this.tiebreak = tiebreak;
+        }
+
+        public int getRank() {
+            return rank;
         }
 
         @Override
@@ -51,10 +55,14 @@ public class PokerHandEvaluator {
 
         for (int val : counts.keySet()) {
             int count = counts.get(val);
-            if (count == 4) four.add(val);
-            else if (count == 3) three.add(val);
-            else if (count == 2) pairs.add(val);
-            else singles.add(val);
+            if (count == 4)
+                four.add(val);
+            else if (count == 3)
+                three.add(val);
+            else if (count == 2)
+                pairs.add(val);
+            else
+                singles.add(val);
         }
 
         Collections.sort(four, Collections.reverseOrder());
@@ -62,11 +70,10 @@ public class PokerHandEvaluator {
         Collections.sort(pairs, Collections.reverseOrder());
         Collections.sort(singles, Collections.reverseOrder());
 
-        
         if (flush && straight) {
             if (values.contains(14) && values.contains(13) &&
-                values.contains(12) && values.contains(11) &&
-                values.contains(10)) {
+                    values.contains(12) && values.contains(11) &&
+                    values.contains(10)) {
                 return new HandResult(10, List.of(14)); // Royal Flush
             }
             return new HandResult(9, List.of(Collections.max(values)));
@@ -101,15 +108,15 @@ public class PokerHandEvaluator {
         Collections.sort(list);
 
         for (int i = 0; i <= list.size() - 5; i++) {
-            if (list.get(i+4) - list.get(i) == 4)
+            if (list.get(i + 4) - list.get(i) == 4)
                 return true;
         }
 
         if (values.contains(14) &&
-            values.contains(2) &&
-            values.contains(3) &&
-            values.contains(4) &&
-            values.contains(5))
+                values.contains(2) &&
+                values.contains(3) &&
+                values.contains(4) &&
+                values.contains(5))
             return true;
 
         return false;
@@ -124,19 +131,32 @@ public class PokerHandEvaluator {
 
     private static int getRankValue(String rank) {
         switch (rank) {
-            case "2": return 2;
-            case "3": return 3;
-            case "4": return 4;
-            case "5": return 5;
-            case "6": return 6;
-            case "7": return 7;
-            case "8": return 8;
-            case "9": return 9;
-            case "10": return 10;
-            case "J": return 11;
-            case "Q": return 12;
-            case "K": return 13;
-            case "A": return 14;
+            case "2":
+                return 2;
+            case "3":
+                return 3;
+            case "4":
+                return 4;
+            case "5":
+                return 5;
+            case "6":
+                return 6;
+            case "7":
+                return 7;
+            case "8":
+                return 8;
+            case "9":
+                return 9;
+            case "10":
+                return 10;
+            case "J":
+                return 11;
+            case "Q":
+                return 12;
+            case "K":
+                return 13;
+            case "A":
+                return 14;
         }
         return 0;
     }
