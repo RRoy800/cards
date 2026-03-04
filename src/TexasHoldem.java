@@ -22,7 +22,6 @@ public class TexasHoldem extends CardGame {
     Random x;
     int willcomputerbid;
     int willcomputerfold;
-    private Random y = new Random();
 
     ClickableRectangle checkButton;
     ClickableRectangle raiseButton;
