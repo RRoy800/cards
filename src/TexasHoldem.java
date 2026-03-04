@@ -93,7 +93,7 @@ public class TexasHoldem extends CardGame {
         confirmRaiseButton.height = 40;
         confirmRaiseButton.x = plusButton.x + 50;
         confirmRaiseButton.y = plusButton.y - 100;
-    
+
     }
 
     @Override
@@ -163,41 +163,91 @@ public class TexasHoldem extends CardGame {
 
         }
     }
-    
+
     @Override
     public void handleComputerTurn() {
-        if (currentPlayerBet > 0) {
-            int callAmount = Math.min(currentPlayerBet, computerMoney); //TODO: set a new variable to equal 
-            computerMoney -= callAmount;
-            potMoney += callAmount;
-            currentPlayerBet = 0;
-            switchTurns();
-        } else {
-            z = new Random(); 
-            willcomputerbid = z.nextInt(6);
-            if (willcomputerbid >= 1) {
-                r = new Random();
-                computerBid = 1 + r.nextInt(30);
-                computerMoney = computerMoney - computerBid;
-                potMoney = potMoney + computerBid;
-
-                switchTurns();
+        ArrayList<Card> playeroneinterimhand = new ArrayList<>();
+        playeroneinterimhand.addAll(playerOneHand.getCards());
+        playeroneinterimhand.addAll(centerCards.getCards());
+        ArrayList<Card> playertwointerimhand = new ArrayList<>();
+        playertwointerimhand.addAll(playerTwoHand.getCards());
+        playertwointerimhand.addAll(centerCards.getCards());
+        PokerHandEvaluator.HandResult playeroneres = PokerHandEvaluator.evaluate(playeroneinterimhand);
+        PokerHandEvaluator.HandResult playertwores = PokerHandEvaluator.evaluate(playertwointerimhand);
+        if (playeroneres.compareTo(playertwores) < 0) {
+            if (currentPlayerBet > 0) {
+                int callAmount = Math.min(currentPlayerBet - computerBid, computerMoney);//Just Changed
+                computerMoney -= callAmount;
+                potMoney += callAmount;
+                currentPlayerBet = 0;
+                computerBid = 0;
                 switchTurns();
             } else {
-                x = new Random();
-                willcomputerfold = x.nextInt(3);
-                if (willcomputerbid >= 2) {
+                z = new Random();
+                willcomputerbid = z.nextInt(9);
+                if (willcomputerbid >= 1) {
+                    r = new Random();
+                    computerBid = 1 + r.nextInt(40);
+                    computerMoney = computerMoney - computerBid;
+                    potMoney = potMoney + computerBid;
+
+                    switchTurns();
                     switchTurns();
                 } else {
                     playerMoney += potMoney;
                     potMoney = 0;
                     switchTurns();
                     switchTurns();
-                    initializeGame();
                 }
             }
+        } else {
+            if (currentPlayerBet > 0) {
+                playerMoney += potMoney;
+                potMoney = 0;
+                switchTurns();
+                switchTurns();
+            } else {
+                switchTurns();
+            }
         }
+
     }
+
+    // @Override
+    // public void handleComputerTurn() {
+    // if (currentPlayerBet > 0) {
+    // int callAmount = Math.min(currentPlayerBet, computerMoney); //TODO: set a new
+    // variable to equal
+    // computerMoney -= callAmount;
+    // potMoney += callAmount;
+    // currentPlayerBet = 0;
+    // switchTurns();
+    // } else {
+    // z = new Random();
+    // willcomputerbid = z.nextInt(6);
+    // if (willcomputerbid >= 1) {
+    // r = new Random();
+    // computerBid = 1 + r.nextInt(30);
+    // computerMoney = computerMoney - computerBid;
+    // potMoney = potMoney + computerBid;
+
+    // switchTurns();
+    // switchTurns();
+    // } else {
+    // x = new Random();
+    // willcomputerfold = x.nextInt(3);
+    // if (willcomputerbid >= 2) {
+    // switchTurns();
+    // } else {
+    // playerMoney += potMoney;
+    // potMoney = 0;
+    // switchTurns();
+    // switchTurns();
+    // initializeGame();
+    // }
+    // }
+    // }
+    // }
 
     public void handleplayerTurn() { // Not Used
         switchTurns();
@@ -212,24 +262,24 @@ public class TexasHoldem extends CardGame {
             }
             numturns = numturns + 1;
             switchTurns();
-        } else if (numturns == 1 || numturns == 2 ){
+        } else if (numturns == 1 || numturns == 2) {
             Card card = dealer.getCard(0);
             card.setTurned(false);
             playCard(card, dealer);
             numturns = numturns + 1;
             switchTurns();
-        }else{
+        } else {
             isGameOver = true;
             return;
         }
 
     }
 
-    public boolean IsGameOver(){
-        return isGameOver; 
+    public boolean IsGameOver() {
+        return isGameOver;
     }
 
-    public String getWinner(){
+    public String getWinner() {
         ArrayList<Card> playeronefinalhand = new ArrayList<>();
         playeronefinalhand.addAll(playerOneHand.getCards());
         playeronefinalhand.addAll(centerCards.getCards());
@@ -238,8 +288,8 @@ public class TexasHoldem extends CardGame {
         playertwofinalhand.addAll(centerCards.getCards());
         PokerHandEvaluator.HandResult playeroneresults = PokerHandEvaluator.evaluate(playeronefinalhand);
         PokerHandEvaluator.HandResult playertworesults = PokerHandEvaluator.evaluate(playertwofinalhand);
-        if(playeroneresults.compareTo(playertworesults) < 0){
-           return "Player Two";
+        if (playeroneresults.compareTo(playertworesults) < 0) {
+            return "Player Two";
         }
         return "Player One";
     }
@@ -321,13 +371,15 @@ public class TexasHoldem extends CardGame {
             }
 
             if (confirmRaiseButton.isClicked(mouseX, mouseY)) {
-                if (playerMoney >= raiseAmount) {
+                if (playerMoney >= raiseAmount && raiseAmount >= computerBid) { //Just changed
                     currentPlayerBet = raiseAmount;
                     playerMoney -= raiseAmount;
                     potMoney += raiseAmount;
                     adjustingRaise = false;
                     raiseAmount = 5;
                     switchTurns();
+                }else{
+                    return;
                 }
             }
         }

@@ -60,7 +60,7 @@ public class TexasHoldemApp extends PApplet {
             }
 
             timer++;
-            if (timer == 200) {
+            if (timer == 100) {
                 cardGame.handledealerTurn();
                 String winner = cardGame.getWinner();
                 drawscreen();
@@ -79,6 +79,7 @@ public class TexasHoldemApp extends PApplet {
 
                 }
                 timer = 0;
+                cardGame.switchTurns();
                 cardGame.initializeGame(); //TODO: Add button for this
             }
         }

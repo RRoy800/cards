@@ -11,10 +11,6 @@ public class PokerHandEvaluator {
             this.tiebreak = tiebreak;
         }
 
-        public int getRank() {
-            return rank;
-        }
-
         @Override
         public int compareTo(HandResult other) {
             if (this.rank != other.rank)
