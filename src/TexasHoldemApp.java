@@ -8,6 +8,7 @@ public class TexasHoldemApp extends PApplet {
     HashMap<String, PImage> cardImages = new HashMap<>();
     private int timer;
 
+    
     public static void main(String[] args) {
         PApplet.main("TexasHoldemApp");
     }
@@ -29,7 +30,7 @@ public class TexasHoldemApp extends PApplet {
         if (!cardGame.IsGameOver()) {
             drawscreen();
 
-            if (cardGame.getCurrentPlayer().equals("Player Two")) { // TODO: Add text saying what computer does
+            if (cardGame.getCurrentPlayer().equals("Player Two")) { //TODO: Add text saying what computer does
                 fill(0);
                 textSize(16);
                 text("Computer is thinking...", width / 2 - 80, height / 2 + 80);
@@ -80,12 +81,7 @@ public class TexasHoldemApp extends PApplet {
                 }
                 timer = 0;
                 cardGame.switchTurns();
-
-                //
-                cardGame.gameActive = false;
-                //
-                // cardGame.initializeGame(); //TODO: Add button for this
-                //
+                cardGame.initializeGame(); //TODO: Add button for this
             }
         }
     }
@@ -96,9 +92,6 @@ public class TexasHoldemApp extends PApplet {
         cardGame.handleFoldButtonClick(mouseX, mouseY);
         cardGame.handleRaiseButtonClick(mouseX, mouseY);
         cardGame.handleCallButtonClick(mouseX, mouseY);
-        //
-        cardGame.handleStartButtonClick(mouseX, mouseY);
-        //
     }
 
     public void drawscreen() {
@@ -109,21 +102,6 @@ public class TexasHoldemApp extends PApplet {
         cardGame.raiseButton.draw(this);
         cardGame.foldButton.draw(this);
         cardGame.callButton.draw(this);
-
-        //
-        if (!cardGame.gameActive) {
-            fill(200);
-            cardGame.startButton.draw(this);
-
-            fill(0);
-            textSize(20);
-            textAlign(CENTER, CENTER);
-            text("Start New Round",
-                    cardGame.startButton.x + cardGame.startButton.width / 2,
-                    cardGame.startButton.y + cardGame.startButton.height / 2);
-        }
-        //
-
         fill(0);
         textAlign(CENTER, CENTER);
         text("Check", cardGame.checkButton.x + cardGame.checkButton.width / 2,
