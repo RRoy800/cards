@@ -47,7 +47,7 @@ public class TexasHoldem extends CardGame {
     int raiseIncrement = 5;
     int currentPlayerBet = 0;
 
-    boolean gamestart = false;//TODO: Add who folded screen
+    boolean gamestart = false;
     String whofolded = "No one";
 
     public TexasHoldem(HashMap<String, PImage> cardImages) {
@@ -109,9 +109,6 @@ public class TexasHoldem extends CardGame {
 
     @Override
     protected void createDeck() {
-        // Create deck (Poker has 52 cards)
-        // Create standard cards (Numbers 2-10, Jack, Queen, King, Ace with 4 respective
-        // suits)
         for (String suit : Suit) {
 
             for (String rank : Rank) {
@@ -214,7 +211,7 @@ public class TexasHoldem extends CardGame {
                     switchTurns();
                     switchTurns();
                     initializeGame();
-                    whofolded = "Computer";
+                    whofolded = "The Computer";
                     gamestart = false;
                 }
             }
@@ -228,7 +225,7 @@ public class TexasHoldem extends CardGame {
                     switchTurns();
                     switchTurns();
                     initializeGame();
-                    whofolded = "Computer";
+                    whofolded = "The Computer";
                     gamestart = false;
                 } else {
                     int callAmount = Math.min(currentPlayerBet - computerBid, computerMoney);
