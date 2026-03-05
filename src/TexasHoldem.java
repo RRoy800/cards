@@ -40,13 +40,14 @@ public class TexasHoldem extends CardGame {
     ClickableRectangle minusButton;
     ClickableRectangle confirmRaiseButton;
     boolean isGameOver;
+    ClickableRectangle startButton;
 
     int raiseAmount = 5;
     boolean adjustingRaise = false;
     int raiseIncrement = 5;
     int currentPlayerBet = 0;
 
-
+    boolean gamestart = false;
 
     public TexasHoldem(HashMap<String, PImage> cardImages) {
         this.cardImages = cardImages;
@@ -96,6 +97,12 @@ public class TexasHoldem extends CardGame {
         confirmRaiseButton.height = 40;
         confirmRaiseButton.x = plusButton.x + 50;
         confirmRaiseButton.y = plusButton.y - 100;
+
+        startButton = new ClickableRectangle();
+        startButton.width = 160;
+        startButton.height = 50;
+        startButton.x = 420;
+        startButton.y = 260;
 
     }
 
@@ -327,6 +334,7 @@ public class TexasHoldem extends CardGame {
             adjustingRaise = false;
             potMoney = 0;
             initializeGame();
+            gamestart = false;
         }
 
     }
@@ -372,6 +380,15 @@ public class TexasHoldem extends CardGame {
                     return;
                 }
             }
+        }
+    }
+
+    public void handleStartButtonClick(int mouseX, int mouseY) {
+        if (startButton.isClicked(mouseX, mouseY)) {
+            gamestart = true;
+            computerMoney -= 10;
+            playerMoney -= 10;
+            potMoney += 20;
         }
     }
 

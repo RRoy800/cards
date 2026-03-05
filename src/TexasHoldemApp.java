@@ -8,7 +8,6 @@ public class TexasHoldemApp extends PApplet {
     HashMap<String, PImage> cardImages = new HashMap<>();
     private int timer;
 
-    
     public static void main(String[] args) {
         PApplet.main("TexasHoldemApp");
     }
@@ -27,71 +26,96 @@ public class TexasHoldemApp extends PApplet {
 
     @Override
     public void draw() {
-        if (!cardGame.IsGameOver()) {
-            drawscreen();
+        if (cardGame.gamestart == false) {
+            background(0, 122, 24);
+            fill(200);
+            cardGame.startButton.draw(this);
 
-            if (cardGame.getCurrentPlayer().equals("Player Two")) { //TODO: Add text saying what computer does
-                fill(0);
-                textSize(16);
-                text("Computer is thinking...", width / 2 - 80, height / 2 + 80);
-                timer++;
-                if (timer == 100) {
-                    cardGame.handleComputerTurn();
-                    timer = 0;
+            fill(0);
+            textSize(20);
+            textAlign(CENTER, CENTER);
+            text("Start New Round",
+                    cardGame.startButton.x + cardGame.startButton.width / 2,
+                    cardGame.startButton.y -10 + cardGame.startButton.height / 2);
+            textSize(10);
+            text("(This will also pay your anti)",
+                    cardGame.startButton.x + cardGame.startButton.width / 2,
+                    cardGame.startButton.y + 10 + cardGame.startButton.height / 2);
+            textSize(16);
+
+        } else {
+
+            if (!cardGame.IsGameOver()) {
+                drawscreen();
+
+                if (cardGame.getCurrentPlayer().equals("Player Two")) { // TODO: Add text saying what computer does
+                    fill(0);
+                    textSize(16);
+                    text("Computer is thinking...", width / 2 - 80, height / 2 + 80);
+                    timer++;
+                    if (timer == 100) {
+                        cardGame.handleComputerTurn();
+                        timer = 0;
+                    }
                 }
-            }
 
-            if (cardGame.getCurrentPlayer().equals("Dealer")) {
-                fill(0);
-                textSize(16);
-                text("Dealer is thinking...", width / 2 - 80, height / 2 + 80);
+                if (cardGame.getCurrentPlayer().equals("Dealer")) {
+                    fill(0);
+                    textSize(16);
+                    text("Dealer is thinking...", width / 2 - 80, height / 2 + 80);
+                    timer++;
+                    if (timer == 100) {
+                        cardGame.handledealerTurn();
+                        timer = 0;
+                    }
+                }
+                cardGame.drawChoices(this);
+
+            } else {
+                for (int i = 0; i < cardGame.playerTwoHand.getSize(); i++) {
+                    Card card = cardGame.playerTwoHand.getCard(i);
+                    card.setTurned(false);
+
+                }
+
                 timer++;
                 if (timer == 100) {
                     cardGame.handledealerTurn();
+                    String winner = cardGame.getWinner();
+                    drawscreen();
+                    fill(0);
+                    textSize(20);
+                    text("The Winner is " + winner + "!", width / 2 - 80, height / 2 + 80);
+                }
+                if (timer == 600) {
+                    String winner = cardGame.getWinner();
+                    if (winner.equals("Player One")) {
+                        cardGame.playerMoney += cardGame.potMoney;
+                        cardGame.potMoney = 0;
+                    } else {
+                        cardGame.computerMoney += cardGame.potMoney;
+                        cardGame.potMoney = 0;
+
+                    }
                     timer = 0;
+                    cardGame.switchTurns();
+                    cardGame.initializeGame(); // TODO: Add button for this
+                    cardGame.gamestart = false;
                 }
-            }
-            cardGame.drawChoices(this);
-
-        } else {
-            for (int i = 0; i < cardGame.playerTwoHand.getSize(); i++) {
-                Card card = cardGame.playerTwoHand.getCard(i);
-                card.setTurned(false);
-
-            }
-
-            timer++;
-            if (timer == 100) {
-                cardGame.handledealerTurn();
-                String winner = cardGame.getWinner();
-                drawscreen();
-                fill(0);
-                textSize(20);
-                text("The Winner is " + winner + "!", width / 2 - 80, height / 2 + 80);
-            }
-            if (timer == 600) {
-                String winner = cardGame.getWinner();
-                if (winner.equals("Player One")) {
-                    cardGame.playerMoney += cardGame.potMoney;
-                    cardGame.potMoney = 0;
-                } else {
-                    cardGame.computerMoney += cardGame.potMoney;
-                    cardGame.potMoney = 0;
-
-                }
-                timer = 0;
-                cardGame.switchTurns();
-                cardGame.initializeGame(); //TODO: Add button for this
             }
         }
     }
 
     @Override
     public void mousePressed() {
+        if(cardGame.gamestart == false){
+            cardGame.handleStartButtonClick(mouseX, mouseY);
+        }else{
         cardGame.handleCheckButtonClick(mouseX, mouseY);
         cardGame.handleFoldButtonClick(mouseX, mouseY);
         cardGame.handleRaiseButtonClick(mouseX, mouseY);
         cardGame.handleCallButtonClick(mouseX, mouseY);
+        }
     }
 
     public void drawscreen() {
@@ -163,4 +187,5 @@ public class TexasHoldemApp extends PApplet {
             }
         }
     }
+
 }
