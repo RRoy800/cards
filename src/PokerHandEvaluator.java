@@ -70,7 +70,7 @@ public class PokerHandEvaluator {
             if (values.contains(14) && values.contains(13) &&
                     values.contains(12) && values.contains(11) &&
                     values.contains(10)) {
-                return new HandResult(10, List.of(14)); // Royal Flush
+                return new HandResult(10, List.of(14));
             }
             return new HandResult(9, List.of(Collections.max(values)));
         }
