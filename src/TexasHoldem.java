@@ -47,7 +47,8 @@ public class TexasHoldem extends CardGame {
     int raiseIncrement = 5;
     int currentPlayerBet = 0;
 
-    boolean gamestart = false;
+    boolean gamestart = false;//TODO: Add who folded screen
+    String whofolded = "No one";
 
     public TexasHoldem(HashMap<String, PImage> cardImages) {
         this.cardImages = cardImages;
@@ -150,9 +151,7 @@ public class TexasHoldem extends CardGame {
         playerTwoHand.positionCards(500, 450, 80, 120, 20);
         dealer.positionCards(50, 50, 80, 120, 20);
         isGameOver = false;
-        // computerMoney = computerMoney - 10; // TODO: Add anti animation/BUTTON
-        // playerMoney = playerMoney - 10;
-        // potMoney = potMoney + 20;
+       
     }
 
     @Override
@@ -215,6 +214,8 @@ public class TexasHoldem extends CardGame {
                     switchTurns();
                     switchTurns();
                     initializeGame();
+                    whofolded = "Computer";
+                    gamestart = false;
                 }
             }
         } else {
@@ -227,6 +228,8 @@ public class TexasHoldem extends CardGame {
                     switchTurns();
                     switchTurns();
                     initializeGame();
+                    whofolded = "Computer";
+                    gamestart = false;
                 } else {
                     int callAmount = Math.min(currentPlayerBet - computerBid, computerMoney);
                     computerMoney -= callAmount;
@@ -283,7 +286,7 @@ public class TexasHoldem extends CardGame {
         PokerHandEvaluator.HandResult playeroneresults = PokerHandEvaluator.evaluate(playeronefinalhand);
         PokerHandEvaluator.HandResult playertworesults = PokerHandEvaluator.evaluate(playertwofinalhand);
         if (playeroneresults.compareTo(playertworesults) < 0) {
-            return "Player Two";
+            return "Computer";
         }
         return "Player One";
     }
@@ -334,6 +337,7 @@ public class TexasHoldem extends CardGame {
             adjustingRaise = false;
             potMoney = 0;
             initializeGame();
+            whofolded = "Player One";
             gamestart = false;
         }
 

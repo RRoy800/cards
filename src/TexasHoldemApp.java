@@ -34,19 +34,24 @@ public class TexasHoldemApp extends PApplet {
             fill(0);
             textSize(20);
             textAlign(CENTER, CENTER);
-            text("Start New Round",
+            text("Start Next Round",
                     cardGame.startButton.x + cardGame.startButton.width / 2,
-                    cardGame.startButton.y -10 + cardGame.startButton.height / 2);
+                    cardGame.startButton.y - 10 + cardGame.startButton.height / 2);
+
             textSize(10);
             text("(This will also pay your anti)",
                     cardGame.startButton.x + cardGame.startButton.width / 2,
                     cardGame.startButton.y + 10 + cardGame.startButton.height / 2);
             textSize(16);
+             
+            if (cardGame.whofolded.equals("Computer") || cardGame.whofolded.equals("Player One")) {
+                text(cardGame.whofolded + " folded. The Money has been transferred", cardGame.startButton.x + cardGame.startButton.width / 2, cardGame.startButton.y - 200 + cardGame.startButton.height / 2);
+            }
 
         } else {
-
             if (!cardGame.IsGameOver()) {
                 drawscreen();
+                cardGame.whofolded = "No one";
 
                 if (cardGame.getCurrentPlayer().equals("Player Two")) { // TODO: Add text saying what computer does
                     fill(0);
@@ -99,7 +104,7 @@ public class TexasHoldemApp extends PApplet {
                     }
                     timer = 0;
                     cardGame.switchTurns();
-                    cardGame.initializeGame(); // TODO: Add button for this
+                    cardGame.initializeGame();
                     cardGame.gamestart = false;
                 }
             }
@@ -108,13 +113,13 @@ public class TexasHoldemApp extends PApplet {
 
     @Override
     public void mousePressed() {
-        if(cardGame.gamestart == false){
+        if (cardGame.gamestart == false) {
             cardGame.handleStartButtonClick(mouseX, mouseY);
-        }else{
-        cardGame.handleCheckButtonClick(mouseX, mouseY);
-        cardGame.handleFoldButtonClick(mouseX, mouseY);
-        cardGame.handleRaiseButtonClick(mouseX, mouseY);
-        cardGame.handleCallButtonClick(mouseX, mouseY);
+        } else {
+            cardGame.handleCheckButtonClick(mouseX, mouseY);
+            cardGame.handleFoldButtonClick(mouseX, mouseY);
+            cardGame.handleRaiseButtonClick(mouseX, mouseY);
+            cardGame.handleCallButtonClick(mouseX, mouseY);
         }
     }
 
