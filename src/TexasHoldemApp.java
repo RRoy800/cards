@@ -44,7 +44,7 @@ public class TexasHoldemApp extends PApplet {
                     cardGame.startButton.y + 10 + cardGame.startButton.height / 2);
             textSize(16);
              
-            if (cardGame.whofolded.equals("Computer") || cardGame.whofolded.equals("Player One")) {
+            if (cardGame.whofolded.equals("The Computer") || cardGame.whofolded.equals("Player One")) {
                 text(cardGame.whofolded + " folded. The Money has been transferred", cardGame.startButton.x + cardGame.startButton.width / 2, cardGame.startButton.y - 200 + cardGame.startButton.height / 2);
             }
 
