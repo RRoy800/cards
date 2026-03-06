@@ -7,6 +7,11 @@ public class TexasHoldemApp extends PApplet {
     TexasHoldem cardGame;
     HashMap<String, PImage> cardImages = new HashMap<>();
     private int timer;
+    PImage chip5Img;
+    PImage chip10Img;
+    PImage chip25Img;
+    Pokerchips playerChips;
+    Pokerchips computerChips;
 
     public static void main(String[] args) {
         PApplet.main("TexasHoldemApp");
@@ -22,74 +27,119 @@ public class TexasHoldemApp extends PApplet {
         }
         cardImages.put("cardback", loadImage("Data/cardback.png"));
         cardGame = new TexasHoldem(cardImages);
+   
+   
+    chip5Img = loadImage("Data/5chip.png");
+    chip10Img = loadImage("Data/10chip.png");
+    chip25Img = loadImage("Data/25chip.png");
+
+    playerChips = new Pokerchips();
+    computerChips = new Pokerchips();
+
+cardGame.playerChips = playerChips;
+cardGame.computerChips = computerChips;
+   
     }
 
     @Override
     public void draw() {
-        if (!cardGame.IsGameOver()) {
-            drawscreen();
+        if (cardGame.gamestart == false) {
+            background(0, 122, 24);
+            fill(200);
+            cardGame.startButton.draw(this);
 
-            if (cardGame.getCurrentPlayer().equals("Player Two")) {
-                fill(0);
-                textSize(16);
-                text("Computer is thinking...", width / 2 - 80, height / 2 + 80);
-                timer++;
-                if (timer == 100) {
-                    cardGame.handleComputerTurn();
-                    timer = 0;
-                }
+            fill(0);
+            textSize(20);
+            textAlign(CENTER, CENTER);
+            text("Start Next Round",
+                    cardGame.startButton.x + cardGame.startButton.width / 2,
+                    cardGame.startButton.y - 10 + cardGame.startButton.height / 2);
+
+            textSize(10);
+            text("(This will also pay your anti)",
+                    cardGame.startButton.x + cardGame.startButton.width / 2,
+                    cardGame.startButton.y + 10 + cardGame.startButton.height / 2);
+            textSize(16);
+             
+            if (cardGame.whofolded.equals("Computer") || cardGame.whofolded.equals("Player One")) {
+                text(cardGame.whofolded + " folded. The Money has been transferred", cardGame.startButton.x + cardGame.startButton.width / 2, cardGame.startButton.y - 200 + cardGame.startButton.height / 2);
             }
 
-            if (cardGame.getCurrentPlayer().equals("Dealer")) {
-                fill(0);
-                textSize(16);
-                text("Dealer is thinking...", width / 2 - 80, height / 2 + 80);
+        } else {
+            if (!cardGame.IsGameOver()) {
+                drawscreen();
+                cardGame.whofolded = "No one";
+
+                if (cardGame.getCurrentPlayer().equals("Player Two")) { // TODO: Add text saying what computer does
+                    fill(0);
+                    textSize(16);
+                    text("Computer is thinking...", width / 2 - 80, height / 2 + 80);
+                    timer++;
+                    if (timer == 100) {
+                        cardGame.handleComputerTurn();
+                        timer = 0;
+                    }
+                }
+
+                if (cardGame.getCurrentPlayer().equals("Dealer")) {
+                    fill(0);
+                    textSize(16);
+                    text("Dealer is thinking...", width / 2 - 80, height / 2 + 80);
+                    timer++;
+                    if (timer == 100) {
+                        cardGame.handledealerTurn();
+                        timer = 0;
+                    }
+                }
+                cardGame.drawChoices(this);
+
+            } else {
+                for (int i = 0; i < cardGame.playerTwoHand.getSize(); i++) {
+                    Card card = cardGame.playerTwoHand.getCard(i);
+                    card.setTurned(false);
+
+                }
+
                 timer++;
                 if (timer == 100) {
                     cardGame.handledealerTurn();
+                    String winner = cardGame.getWinner();
+                    drawscreen();
+                    fill(0);
+                    textSize(20);
+                    text("The Winner is " + winner + "!", width / 2 - 80, height / 2 + 80);
+                }
+                if (timer == 600) {
+                    String winner = cardGame.getWinner();
+                    if (winner.equals("Player One")) {
+                        cardGame.playerMoney += cardGame.potMoney;
+                        playerChips.AddChips(cardGame.potMoney);
+                        cardGame.potMoney = 0;
+                    } else {
+                        cardGame.computerMoney += cardGame.potMoney;
+                        computerChips.AddChips(cardGame.potMoney);
+                        cardGame.potMoney = 0;
+
+                    }
                     timer = 0;
+                    cardGame.switchTurns();
+                    cardGame.initializeGame();
+                    cardGame.gamestart = false;
                 }
-            }
-            cardGame.drawChoices(this);
-
-        } else {
-            for (int i = 0; i < cardGame.playerTwoHand.getSize(); i++) {
-                Card card = cardGame.playerTwoHand.getCard(i);
-                card.setTurned(false);
-
-            }
-
-            timer++;
-            if (timer == 200) {
-                cardGame.handledealerTurn();
-                String winner = cardGame.getWinner();
-                drawscreen();
-                fill(0);
-                textSize(20);
-                text("The Winner is " + winner + "!", width / 2 - 80, height / 2 + 80);
-            }
-            if (timer == 600) {
-                String winner = cardGame.getWinner();
-                if (winner.equals("Player One")) {
-                    cardGame.playerMoney += cardGame.potMoney;
-                    cardGame.potMoney = 0;
-                } else {
-                    cardGame.computerMoney += cardGame.potMoney;
-                    cardGame.potMoney = 0;
-
-                }
-                timer = 0;
-                cardGame.initializeGame(); //TODO: Add button for this
             }
         }
     }
 
     @Override
     public void mousePressed() {
-        cardGame.handleCheckButtonClick(mouseX, mouseY);
-        cardGame.handleFoldButtonClick(mouseX, mouseY);
-        cardGame.handleRaiseButtonClick(mouseX, mouseY);
-        cardGame.handleCallButtonClick(mouseX, mouseY);
+        if (cardGame.gamestart == false) {
+            cardGame.handleStartButtonClick(mouseX, mouseY);
+        } else {
+            cardGame.handleCheckButtonClick(mouseX, mouseY);
+            cardGame.handleFoldButtonClick(mouseX, mouseY);
+            cardGame.handleRaiseButtonClick(mouseX, mouseY);
+            cardGame.handleCallButtonClick(mouseX, mouseY);
+        }
     }
 
     public void drawscreen() {
@@ -127,8 +177,32 @@ public class TexasHoldemApp extends PApplet {
                     cardGame.confirmRaiseButton.y + cardGame.confirmRaiseButton.height / 2);
         }
 
+
+        ///Draw Chips
+        // Player Chips
+for (int i = 0; i < playerChips.chips25; i++) {
+    image(chip25Img, 120, 340 - i * 40, 50, 50);
+}
+for (int i = 0; i < playerChips.chips10; i++) {
+    image(chip10Img, 60, 340 - i * 40, 70, 50);
+}
+for (int i = 0; i < playerChips.chips5; i++) {
+    image(chip5Img, 20, 340 - i * 40, 50, 50);
+}
+
+// Computer Chips
+for (int i = 0; i < computerChips.chips25; i++) {
+    image(chip25Img, 850, 500 - i * 40, 50, 50);
+}
+for (int i = 0; i < computerChips.chips10; i++) {
+    image(chip10Img, 890, 500 - i * 40, 70, 50);
+}
+for (int i = 0; i < computerChips.chips5; i++) {
+    image(chip5Img, 950, 500 - i * 40, 50, 50);
+}
+
         // Draw player hands
-        text("You have $" + cardGame.playerMoney, 50, 590);
+        text("You have $" + cardGame.playerMoney, 60, 585);
         for (int i = 0; i < cardGame.playerOneHand.getSize(); i++) {
             Card card = cardGame.playerOneHand.getCard(i);
             if (card != null) {
@@ -136,7 +210,7 @@ public class TexasHoldemApp extends PApplet {
             }
         }
         // Draw computer hand
-        text("The Computer has $" + cardGame.computerMoney, 450, 590);
+        text("The Computer has $" + cardGame.computerMoney, 460, 585);
         for (int i = 0; i < cardGame.playerTwoHand.getSize(); i++) {
             Card card = cardGame.playerTwoHand.getCard(i);
             if (card != null) {
@@ -161,4 +235,5 @@ public class TexasHoldemApp extends PApplet {
             }
         }
     }
+
 }
