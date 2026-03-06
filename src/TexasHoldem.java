@@ -173,7 +173,7 @@ public class TexasHoldem extends CardGame {
     }
 
     @Override
-    public void handleComputerTurn() {
+    public void handleComputerTurn() { // TODO: Add text saying what computer does. Use a String that changes to raise, call, check based on what computer does.
         ArrayList<Card> playeroneinterimhand = new ArrayList<>();
         playeroneinterimhand.addAll(playerOneHand.getCards());
         playeroneinterimhand.addAll(centerCards.getCards());
@@ -196,7 +196,7 @@ public class TexasHoldem extends CardGame {
                 if (willcomputerbid >= 1) {
                     r = new Random();
                     if (computerMoney >= 40) {
-                        computerBid = (1 + r.nextInt(20)) * 5;
+                        computerBid = (1 + r.nextInt(15)) * 5;
                     } else {
                         computerBid = (5 * (1 + r.nextInt(computerMoney - 1)));
                     }

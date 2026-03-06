@@ -53,7 +53,7 @@ public class TexasHoldemApp extends PApplet {
                 drawscreen();
                 cardGame.whofolded = "No one";
 
-                if (cardGame.getCurrentPlayer().equals("Player Two")) { // TODO: Add text saying what computer does
+                if (cardGame.getCurrentPlayer().equals("Player Two")) { 
                     fill(0);
                     textSize(16);
                     text("Computer is thinking...", width / 2 - 80, height / 2 + 80);
