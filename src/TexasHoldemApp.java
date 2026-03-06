@@ -5,8 +5,12 @@ import processing.core.PImage;
 
 public class TexasHoldemApp extends PApplet {
     TexasHoldem cardGame;
+   
+   //Card Images: https://code.google.com/archive/p/vector-playing-cards/downloads
     HashMap<String, PImage> cardImages = new HashMap<>();
     private int timer;
+   
+   //Chip images: https://www.pngaaa.com/detail/1408506#google_vignette
     PImage chip5Img;
     PImage chip10Img;
     PImage chip25Img;

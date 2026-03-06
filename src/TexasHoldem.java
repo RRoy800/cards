@@ -405,6 +405,8 @@ public class TexasHoldem extends CardGame {
             playerMoney -= anti;
             playerChips.RaiseBet(anti);
             potMoney += anti * 2;
+             playerChips.resetChips(playerMoney);  
+            computerChips.resetChips(computerMoney);
         }
     }
 
