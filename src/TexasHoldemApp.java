@@ -70,16 +70,16 @@ cardGame.computerChips = computerChips;
                 drawscreen();
                 cardGame.whofolded = "No one";
 
-                if (cardGame.getCurrentPlayer().equals("Player Two")) { // TODO: Add text saying what computer does
-                    fill(0);
-                    textSize(16);
-                    text("Computer is thinking...", width / 2 - 80, height / 2 + 80);
-                    timer++;
-                    if (timer == 100) {
-                        cardGame.handleComputerTurn();
-                        timer = 0;
-                    }
+            if (cardGame.getCurrentPlayer().equals("Player Two")) {
+                fill(0);
+                textSize(16);
+                text("Computer is thinking...", width / 2 - 80, height / 2 + 80);
+                timer++;
+                if (timer == 100) {
+                    cardGame.handleComputerTurn();
+                    timer = 0;
                 }
+            }
 
                 if (cardGame.getCurrentPlayer().equals("Dealer")) {
                     fill(0);
@@ -100,25 +100,23 @@ cardGame.computerChips = computerChips;
 
                 }
 
-                timer++;
-                if (timer == 100) {
-                    cardGame.handledealerTurn();
-                    String winner = cardGame.getWinner();
-                    drawscreen();
-                    fill(0);
-                    textSize(20);
-                    text("The Winner is " + winner + "!", width / 2 - 80, height / 2 + 80);
-                }
-                if (timer == 600) {
-                    String winner = cardGame.getWinner();
-                    if (winner.equals("Player One")) {
-                        cardGame.playerMoney += cardGame.potMoney;
-                        playerChips.AddChips(cardGame.potMoney);
-                        cardGame.potMoney = 0;
-                    } else {
-                        cardGame.computerMoney += cardGame.potMoney;
-                        computerChips.AddChips(cardGame.potMoney);
-                        cardGame.potMoney = 0;
+            timer++;
+            if (timer == 200) {
+                cardGame.handledealerTurn();
+                String winner = cardGame.getWinner();
+                drawscreen();
+                fill(0);
+                textSize(20);
+                text("The Winner is " + winner + "!", width / 2 - 80, height / 2 + 80);
+            }
+            if (timer == 600) {
+                String winner = cardGame.getWinner();
+                if (winner.equals("Player One")) {
+                    cardGame.playerMoney += cardGame.potMoney;
+                    cardGame.potMoney = 0;
+                } else {
+                    cardGame.computerMoney += cardGame.potMoney;
+                    cardGame.potMoney = 0;
 
                     }
                     timer = 0;
