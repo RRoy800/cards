@@ -5,17 +5,8 @@ import processing.core.PImage;
 
 public class TexasHoldemApp extends PApplet {
     TexasHoldem cardGame;
-   
-   //Card Images: https://code.google.com/archive/p/vector-playing-cards/downloads
     HashMap<String, PImage> cardImages = new HashMap<>();
     private int timer;
-   
-   //Chip images: https://www.pngaaa.com/detail/1408506#google_vignette
-    PImage chip5Img;
-    PImage chip10Img;
-    PImage chip25Img;
-    Pokerchips playerChips;
-    Pokerchips computerChips;
 
     public static void main(String[] args) {
         PApplet.main("TexasHoldemApp");
@@ -31,18 +22,6 @@ public class TexasHoldemApp extends PApplet {
         }
         cardImages.put("cardback", loadImage("Data/cardback.png"));
         cardGame = new TexasHoldem(cardImages);
-   
-   
-    chip5Img = loadImage("Data/5chip.png");
-    chip10Img = loadImage("Data/10chip.png");
-    chip25Img = loadImage("Data/25chip.png");
-
-    playerChips = new Pokerchips();
-    computerChips = new Pokerchips();
-
-cardGame.playerChips = playerChips;
-cardGame.computerChips = computerChips;
-   
     }
 
     @Override
@@ -64,9 +43,11 @@ cardGame.computerChips = computerChips;
                     cardGame.startButton.x + cardGame.startButton.width / 2,
                     cardGame.startButton.y + 10 + cardGame.startButton.height / 2);
             textSize(16);
-             
+
             if (cardGame.whofolded.equals("The Computer") || cardGame.whofolded.equals("Player One")) {
-                text(cardGame.whofolded + " folded. The Money has been transferred", cardGame.startButton.x + cardGame.startButton.width / 2, cardGame.startButton.y - 200 + cardGame.startButton.height / 2);
+                text(cardGame.whofolded + " folded. The Money has been transferred.",
+                        cardGame.startButton.x + cardGame.startButton.width / 2,
+                        cardGame.startButton.y - 200 + cardGame.startButton.height / 2);
             }
 
         } else {
@@ -74,49 +55,45 @@ cardGame.computerChips = computerChips;
                 drawscreen();
                 cardGame.whofolded = "No one";
 
-<<<<<<< HEAD
-                if (cardGame.getCurrentPlayer().equals("Player Two")) {  
+                if (cardGame.getCurrentPlayer().equals("Player Two")) {
                     fill(0);
                     textSize(16);
-                    text("Computer is thinking...", width / 2 - 80, height / 2 + 80); // TODO: add the text here. If computer choice == "choice," text(The computed ...)                   
+                    text("Computer is thinking...", width / 2 - 80, height / 2 + 80);
                     timer++;
                     if (timer == 100) {
                         cardGame.handleComputerTurn();
                         timer = 0;
                     }
-=======
-            if (cardGame.getCurrentPlayer().equals("Player Two")) {
-                fill(0);
-                textSize(16);
-                text("Computer is thinking...", width / 2 - 80, height / 2 + 80);
-                timer++;
-                if (timer == 100) {
-                    cardGame.handleComputerTurn();
-                    timer = 0;
->>>>>>> 46384ec9c282b7d65f08f5cdb2363e9e8b855e33
                 }
-            }
+
+                //
+                if (cardGame.computerStatus.equals("raised")) {
+                    if (cardGame.computerBid > 0) {
+                        textSize(24);
+                        fill(0);
+                        text("The Computer " + cardGame.computerStatus + " $" + cardGame.computerBid + ".",
+                                width / 2 + 200, height / 2 + 100);
+                        textSize(16);
+                    } else {
+                        textSize(24);
+                        text("The Computer has called.", width / 2 + 200, height / 2 + 100);
+                        textSize(16);
+                    }
+
+                }
+                //
 
                 if (cardGame.getCurrentPlayer().equals("Dealer")) {
                     fill(0);
                     textSize(16);
-                    if (cardGame.computerStatus.equals("called") || cardGame.computerStatus.equals("checked")){
+                    if (cardGame.computerStatus.equals("called") || cardGame.computerStatus.equals("checked")) {
                         textSize(24);
-                        text("The Computer " + cardGame.computerStatus + ".",  width / 2 + 200, height / 2 + 100);
+                        text("The Computer " + cardGame.computerStatus + ".", width / 2 + 200, height / 2 + 100);
                         textSize(16);
                     }
-                     if (cardGame.computerStatus.equals("raised")){
-                        textSize(24);
-                        if (cardGame.computerBid > 0){
-                        text("The Computer " + cardGame.computerStatus + "$" + cardGame.computerBid + ".",  width / 2 + 200, height / 2 + 100);
-                        } else {
-                            text("The Computer has called.",  width / 2 + 200, height / 2 + 100);
-                        }
-                        textSize(16);
-                    }
-                    text("Dealer is thinking...", width / 2 - 80, height / 2 + 80);
+                    //text("Dealer is thinking...", width / 2 - 80, height / 2 + 80);
                     timer++;
-                    if (timer == 100) {
+                    if (timer == 60) {
                         cardGame.handledealerTurn();
                         timer = 0;
                     }
@@ -130,23 +107,23 @@ cardGame.computerChips = computerChips;
 
                 }
 
-            timer++;
-            if (timer == 200) {
-                cardGame.handledealerTurn();
-                String winner = cardGame.getWinner();
-                drawscreen();
-                fill(0);
-                textSize(20);
-                text("The Winner is " + winner + "!", width / 2 - 80, height / 2 + 80);
-            }
-            if (timer == 600) {
-                String winner = cardGame.getWinner();
-                if (winner.equals("Player One")) {
-                    cardGame.playerMoney += cardGame.potMoney;
-                    cardGame.potMoney = 0;
-                } else {
-                    cardGame.computerMoney += cardGame.potMoney;
-                    cardGame.potMoney = 0;
+                timer++;
+                if (timer == 60) {
+                    cardGame.handledealerTurn();
+                    String winner = cardGame.getWinner();
+                    drawscreen();
+                    fill(0);
+                    textSize(20);
+                    text("The Winner is " + winner + "!", width / 2 - 80, height / 2 + 80);
+                }
+                if (timer == 600) {
+                    String winner = cardGame.getWinner();
+                    if (winner.equals("Player One")) {
+                        cardGame.playerMoney += cardGame.potMoney;
+                        cardGame.potMoney = 0;
+                    } else {
+                        cardGame.computerMoney += cardGame.potMoney;
+                        cardGame.potMoney = 0;
 
                     }
                     timer = 0;
@@ -205,30 +182,6 @@ cardGame.computerChips = computerChips;
                     cardGame.confirmRaiseButton.y + cardGame.confirmRaiseButton.height / 2);
         }
 
-
-        ///Draw Chips
-        // Player Chips
-for (int i = 0; i < playerChips.chips25; i++) {
-    image(chip25Img, 120, 340 - i * 40, 50, 50);
-}
-for (int i = 0; i < playerChips.chips10; i++) {
-    image(chip10Img, 60, 340 - i * 40, 70, 50);
-}
-for (int i = 0; i < playerChips.chips5; i++) {
-    image(chip5Img, 20, 340 - i * 40, 50, 50);
-}
-
-// Computer Chips
-for (int i = 0; i < computerChips.chips25; i++) {
-    image(chip25Img, 850, 500 - i * 40, 50, 50);
-}
-for (int i = 0; i < computerChips.chips10; i++) {
-    image(chip10Img, 890, 500 - i * 40, 70, 50);
-}
-for (int i = 0; i < computerChips.chips5; i++) {
-    image(chip5Img, 950, 500 - i * 40, 50, 50);
-}
-
         // Draw player hands
         text("You have $" + cardGame.playerMoney, 60, 585);
         for (int i = 0; i < cardGame.playerOneHand.getSize(); i++) {
@@ -248,14 +201,14 @@ for (int i = 0; i < computerChips.chips5; i++) {
 
         // draw dealer hand
         textSize(25);
-        fill (0);
+        fill(0);
         text("The Pot has $" + cardGame.potMoney, 500, 110);
         for (int i = 0; i < cardGame.dealer.getSize(); i++) {
             Card card = cardGame.dealer.getCard(i);
             if (card != null) {
                 card.draw(this);
             }
-         textSize(16);
+            textSize(16);
         }
 
         // draw center hand

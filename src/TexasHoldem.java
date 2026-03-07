@@ -16,8 +16,6 @@ public class TexasHoldem extends CardGame {
     int playerMoney;
     int computerMoney;
     int potMoney;
-    public Pokerchips playerChips; 
-    public Pokerchips computerChips;
     Random r;
     int computerBid;
     Random z;
@@ -51,11 +49,7 @@ public class TexasHoldem extends CardGame {
 
     boolean gamestart = false;
     String whofolded = "No one";
-<<<<<<< HEAD
     String computerStatus = "nothing";
-=======
-    int anti = 5;//ANTI
->>>>>>> 46384ec9c282b7d65f08f5cdb2363e9e8b855e33
 
     public TexasHoldem(HashMap<String, PImage> cardImages) {
         this.cardImages = cardImages;
@@ -85,8 +79,8 @@ public class TexasHoldem extends CardGame {
         foldButton.width = ButtonWidth;
         foldButton.height = ButtonHeight;
 
-        playerMoney = 100;//MONEY
-        computerMoney = 100;
+        playerMoney = 1000;
+        computerMoney = 1000;
 
         plusButton = new ClickableRectangle();
         plusButton.width = 40;
@@ -181,10 +175,6 @@ public class TexasHoldem extends CardGame {
 
     @Override
     public void handleComputerTurn() {
-          if (computerMoney <= 0 && currentPlayerBet <= 0) { 
-        switchTurns();                                  
-        return;                                        
-    }   
         ArrayList<Card> playeroneinterimhand = new ArrayList<>();
         playeroneinterimhand.addAll(playerOneHand.getCards());
         playeroneinterimhand.addAll(centerCards.getCards());
@@ -196,7 +186,6 @@ public class TexasHoldem extends CardGame {
         if (playeroneres.compareTo(playertwores) < 0) {
             if (currentPlayerBet > 0) {
                 int callAmount = Math.min(currentPlayerBet - computerBid, computerMoney);
-                computerChips.RaiseBet(callAmount);
                 computerMoney -= callAmount;
                 potMoney += callAmount;
                 currentPlayerBet = 0;
@@ -209,31 +198,28 @@ public class TexasHoldem extends CardGame {
                 if (willcomputerbid >= 1) {
                     r = new Random();
                     if (computerMoney >= 40) {
-                        computerBid = (1 + r.nextInt(4)) * 5;
+                        computerBid = (1 + r.nextInt(15)) * 5;
                     } else {
                         computerBid = (5 * (1 + r.nextInt(computerMoney - 1)));
                     }
-<<<<<<< HEAD
                     if (computerBid > computerMoney){
                         computerBid = 0;
                     }
-=======
-                    computerChips.RaiseBet(computerBid);
->>>>>>> 46384ec9c282b7d65f08f5cdb2363e9e8b855e33
                     computerMoney = computerMoney - computerBid;
                     potMoney = potMoney + computerBid;
                     computerStatus = "raised";
                     switchTurns();
                     switchTurns();
                 } else {
-                    playerMoney = playerMoney + potMoney;
-                    playerChips.AddChips(potMoney);
-                    potMoney = 0;
                     switchTurns();
-                    switchTurns();
-                    initializeGame();
-                    whofolded = "The Computer";
-                    gamestart = false;
+                    computerStatus = "checked";
+                    // playerMoney = playerMoney + potMoney;
+                    // potMoney = 0;
+                    // switchTurns();
+                    // switchTurns();
+                    // initializeGame();
+                    // whofolded = "The Computer";
+                    // gamestart = false;
                 }
             }
         } else {
@@ -343,12 +329,8 @@ public class TexasHoldem extends CardGame {
 
     public void handleCheckButtonClick(int mouseX, int mouseY) {
         if (checkButton.isClicked(mouseX, mouseY) && getCurrentPlayer().equals("Player One")) {
-<<<<<<< HEAD
             if (computerBid == 0) {
                 computerStatus = "nothing";
-=======
-            if (computerBid == 0 || playerMoney <= 0) {
->>>>>>> 46384ec9c282b7d65f08f5cdb2363e9e8b855e33
                 adjustingRaise = false;
                 currentPlayerBet = 0;
                 switchTurns();
@@ -361,7 +343,6 @@ public class TexasHoldem extends CardGame {
         if (foldButton.isClicked(mouseX, mouseY) && getCurrentPlayer().equals("Player One")) {
             computerStatus = "nothing";
             computerMoney += potMoney;
-            computerChips.AddChips(potMoney);
             adjustingRaise = false;
             potMoney = 0;
             initializeGame();
@@ -374,11 +355,7 @@ public class TexasHoldem extends CardGame {
     public void handleCallButtonClick(int mouseX, int mouseY) {
         if (callButton.isClicked(mouseX, mouseY) && getCurrentPlayer().equals("Player One")) {
             if (computerBid > 0 && playerMoney >= computerBid) {
-<<<<<<< HEAD
                 computerStatus = "nothing";
-=======
-               playerChips.RaiseBet(computerBid);
->>>>>>> 46384ec9c282b7d65f08f5cdb2363e9e8b855e33
                 playerMoney = playerMoney - computerBid;
                 potMoney = potMoney + computerBid;
                 computerBid = 0;
@@ -409,7 +386,6 @@ public class TexasHoldem extends CardGame {
             if (confirmRaiseButton.isClicked(mouseX, mouseY)) {
                 if (playerMoney >= raiseAmount && raiseAmount >= computerBid) {
                     currentPlayerBet = raiseAmount;
-                    playerChips.RaiseBet(raiseAmount);
                     playerMoney -= raiseAmount;
                     potMoney += raiseAmount;
                     adjustingRaise = false;
@@ -426,13 +402,9 @@ public class TexasHoldem extends CardGame {
         if (startButton.isClicked(mouseX, mouseY)) {
             computerStatus = "nothing";
             gamestart = true;
-            computerMoney -= anti;
-            computerChips.RaiseBet(anti);
-            playerMoney -= anti;
-            playerChips.RaiseBet(anti);
-            potMoney += anti * 2;
-             playerChips.resetChips(playerMoney);  
-            computerChips.resetChips(computerMoney);
+            computerMoney -= 10;
+            playerMoney -= 10;
+            potMoney += 20;
         }
     }
 
