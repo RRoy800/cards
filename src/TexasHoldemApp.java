@@ -53,10 +53,10 @@ public class TexasHoldemApp extends PApplet {
                 drawscreen();
                 cardGame.whofolded = "No one";
 
-                if (cardGame.getCurrentPlayer().equals("Player Two")) { 
+                if (cardGame.getCurrentPlayer().equals("Player Two")) {  
                     fill(0);
                     textSize(16);
-                    text("Computer is thinking...", width / 2 - 80, height / 2 + 80);
+                    text("Computer is thinking...", width / 2 - 80, height / 2 + 80); // TODO: add the text here. If computer choice == "choice," text(The computed ...)                   
                     timer++;
                     if (timer == 100) {
                         cardGame.handleComputerTurn();
@@ -67,6 +67,20 @@ public class TexasHoldemApp extends PApplet {
                 if (cardGame.getCurrentPlayer().equals("Dealer")) {
                     fill(0);
                     textSize(16);
+                    if (cardGame.computerStatus.equals("called") || cardGame.computerStatus.equals("checked")){
+                        textSize(24);
+                        text("The Computer " + cardGame.computerStatus + ".",  width / 2 + 200, height / 2 + 100);
+                        textSize(16);
+                    }
+                     if (cardGame.computerStatus.equals("raised")){
+                        textSize(24);
+                        if (cardGame.computerBid > 0){
+                        text("The Computer " + cardGame.computerStatus + "$" + cardGame.computerBid + ".",  width / 2 + 200, height / 2 + 100);
+                        } else {
+                            text("The Computer has called.",  width / 2 + 200, height / 2 + 100);
+                        }
+                        textSize(16);
+                    }
                     text("Dealer is thinking...", width / 2 - 80, height / 2 + 80);
                     timer++;
                     if (timer == 100) {
@@ -176,12 +190,15 @@ public class TexasHoldemApp extends PApplet {
         }
 
         // draw dealer hand
+        textSize(25);
+        fill (0);
         text("The Pot has $" + cardGame.potMoney, 500, 110);
         for (int i = 0; i < cardGame.dealer.getSize(); i++) {
             Card card = cardGame.dealer.getCard(i);
             if (card != null) {
                 card.draw(this);
             }
+         textSize(16);
         }
 
         // draw center hand

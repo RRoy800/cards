@@ -49,6 +49,7 @@ public class TexasHoldem extends CardGame {
 
     boolean gamestart = false;
     String whofolded = "No one";
+    String computerStatus = "nothing";
 
     public TexasHoldem(HashMap<String, PImage> cardImages) {
         this.cardImages = cardImages;
@@ -189,6 +190,7 @@ public class TexasHoldem extends CardGame {
                 potMoney += callAmount;
                 currentPlayerBet = 0;
                 computerBid = 0;
+                computerStatus = "called";
                 switchTurns();
             } else {
                 z = new Random();
@@ -200,9 +202,12 @@ public class TexasHoldem extends CardGame {
                     } else {
                         computerBid = (5 * (1 + r.nextInt(computerMoney - 1)));
                     }
+                    if (computerBid > computerMoney){
+                        computerBid = 0;
+                    }
                     computerMoney = computerMoney - computerBid;
                     potMoney = potMoney + computerBid;
-
+                    computerStatus = "raised";
                     switchTurns();
                     switchTurns();
                 } else {
@@ -218,7 +223,7 @@ public class TexasHoldem extends CardGame {
         } else {
             if (currentPlayerBet > 0) {
                 d = new Random();
-                whatwillcompdo = d.nextInt(6);
+                whatwillcompdo = d.nextInt(7);
                 if (whatwillcompdo > 3) {
                     playerMoney = playerMoney + potMoney;
                     potMoney = 0;
@@ -233,11 +238,13 @@ public class TexasHoldem extends CardGame {
                     potMoney += callAmount;
                     currentPlayerBet = 0;
                     computerBid = 0;
+                    computerStatus = "called";
                     switchTurns();
                     return;
                 }
             } else {
                 switchTurns();
+                computerStatus = "checked";
             }
         }
 
@@ -248,6 +255,7 @@ public class TexasHoldem extends CardGame {
     }
 
     public void handledealerTurn() {
+        computerStatus = "nothing";
         if (numturns == 0) {
             for (int i = 0; i < 3; i++) {
                 Card card = dealer.getCard(0);
@@ -320,6 +328,7 @@ public class TexasHoldem extends CardGame {
     public void handleCheckButtonClick(int mouseX, int mouseY) {
         if (checkButton.isClicked(mouseX, mouseY) && getCurrentPlayer().equals("Player One")) {
             if (computerBid == 0) {
+                computerStatus = "nothing";
                 adjustingRaise = false;
                 currentPlayerBet = 0;
                 switchTurns();
@@ -330,6 +339,7 @@ public class TexasHoldem extends CardGame {
 
     public void handleFoldButtonClick(int mouseX, int mouseY) {
         if (foldButton.isClicked(mouseX, mouseY) && getCurrentPlayer().equals("Player One")) {
+            computerStatus = "nothing";
             computerMoney += potMoney;
             adjustingRaise = false;
             potMoney = 0;
@@ -343,6 +353,7 @@ public class TexasHoldem extends CardGame {
     public void handleCallButtonClick(int mouseX, int mouseY) {
         if (callButton.isClicked(mouseX, mouseY) && getCurrentPlayer().equals("Player One")) {
             if (computerBid > 0 && playerMoney >= computerBid) {
+                computerStatus = "nothing";
                 playerMoney = playerMoney - computerBid;
                 potMoney = potMoney + computerBid;
                 computerBid = 0;
@@ -357,6 +368,7 @@ public class TexasHoldem extends CardGame {
     public void handleRaiseButtonClick(int mouseX, int mouseY) {
         if (raiseButton.isClicked(mouseX, mouseY) && getCurrentPlayer().equals("Player One")) {
             adjustingRaise = true;
+            computerStatus = "nothing";
         }
 
         if (adjustingRaise) {
@@ -386,6 +398,7 @@ public class TexasHoldem extends CardGame {
 
     public void handleStartButtonClick(int mouseX, int mouseY) {
         if (startButton.isClicked(mouseX, mouseY)) {
+            computerStatus = "nothing";
             gamestart = true;
             computerMoney -= 10;
             playerMoney -= 10;
