@@ -5,8 +5,17 @@ import processing.core.PImage;
 
 public class TexasHoldemApp extends PApplet {
     TexasHoldem cardGame;
+   
+   //Card Images: https://code.google.com/archive/p/vector-playing-cards/downloads
     HashMap<String, PImage> cardImages = new HashMap<>();
     private int timer;
+   
+   //Chip images: https://www.pngaaa.com/detail/1408506#google_vignette
+    PImage chip5Img;
+    PImage chip10Img;
+    PImage chip25Img;
+    Pokerchips playerChips;
+    Pokerchips computerChips;
 
     public static void main(String[] args) {
         PApplet.main("TexasHoldemApp");
@@ -22,6 +31,18 @@ public class TexasHoldemApp extends PApplet {
         }
         cardImages.put("cardback", loadImage("Data/cardback.png"));
         cardGame = new TexasHoldem(cardImages);
+   
+   
+    chip5Img = loadImage("Data/5chip.png");
+    chip10Img = loadImage("Data/10chip.png");
+    chip25Img = loadImage("Data/25chip.png");
+
+    playerChips = new Pokerchips();
+    computerChips = new Pokerchips();
+
+cardGame.playerChips = playerChips;
+cardGame.computerChips = computerChips;
+   
     }
 
     @Override
@@ -53,6 +74,7 @@ public class TexasHoldemApp extends PApplet {
                 drawscreen();
                 cardGame.whofolded = "No one";
 
+<<<<<<< HEAD
                 if (cardGame.getCurrentPlayer().equals("Player Two")) {  
                     fill(0);
                     textSize(16);
@@ -62,7 +84,18 @@ public class TexasHoldemApp extends PApplet {
                         cardGame.handleComputerTurn();
                         timer = 0;
                     }
+=======
+            if (cardGame.getCurrentPlayer().equals("Player Two")) {
+                fill(0);
+                textSize(16);
+                text("Computer is thinking...", width / 2 - 80, height / 2 + 80);
+                timer++;
+                if (timer == 100) {
+                    cardGame.handleComputerTurn();
+                    timer = 0;
+>>>>>>> 46384ec9c282b7d65f08f5cdb2363e9e8b855e33
                 }
+            }
 
                 if (cardGame.getCurrentPlayer().equals("Dealer")) {
                     fill(0);
@@ -97,23 +130,23 @@ public class TexasHoldemApp extends PApplet {
 
                 }
 
-                timer++;
-                if (timer == 100) {
-                    cardGame.handledealerTurn();
-                    String winner = cardGame.getWinner();
-                    drawscreen();
-                    fill(0);
-                    textSize(20);
-                    text("The Winner is " + winner + "!", width / 2 - 80, height / 2 + 80);
-                }
-                if (timer == 600) {
-                    String winner = cardGame.getWinner();
-                    if (winner.equals("Player One")) {
-                        cardGame.playerMoney += cardGame.potMoney;
-                        cardGame.potMoney = 0;
-                    } else {
-                        cardGame.computerMoney += cardGame.potMoney;
-                        cardGame.potMoney = 0;
+            timer++;
+            if (timer == 200) {
+                cardGame.handledealerTurn();
+                String winner = cardGame.getWinner();
+                drawscreen();
+                fill(0);
+                textSize(20);
+                text("The Winner is " + winner + "!", width / 2 - 80, height / 2 + 80);
+            }
+            if (timer == 600) {
+                String winner = cardGame.getWinner();
+                if (winner.equals("Player One")) {
+                    cardGame.playerMoney += cardGame.potMoney;
+                    cardGame.potMoney = 0;
+                } else {
+                    cardGame.computerMoney += cardGame.potMoney;
+                    cardGame.potMoney = 0;
 
                     }
                     timer = 0;
@@ -171,6 +204,30 @@ public class TexasHoldemApp extends PApplet {
                     cardGame.confirmRaiseButton.x + cardGame.confirmRaiseButton.width / 2,
                     cardGame.confirmRaiseButton.y + cardGame.confirmRaiseButton.height / 2);
         }
+
+
+        ///Draw Chips
+        // Player Chips
+for (int i = 0; i < playerChips.chips25; i++) {
+    image(chip25Img, 120, 340 - i * 40, 50, 50);
+}
+for (int i = 0; i < playerChips.chips10; i++) {
+    image(chip10Img, 60, 340 - i * 40, 70, 50);
+}
+for (int i = 0; i < playerChips.chips5; i++) {
+    image(chip5Img, 20, 340 - i * 40, 50, 50);
+}
+
+// Computer Chips
+for (int i = 0; i < computerChips.chips25; i++) {
+    image(chip25Img, 850, 500 - i * 40, 50, 50);
+}
+for (int i = 0; i < computerChips.chips10; i++) {
+    image(chip10Img, 890, 500 - i * 40, 70, 50);
+}
+for (int i = 0; i < computerChips.chips5; i++) {
+    image(chip5Img, 950, 500 - i * 40, 50, 50);
+}
 
         // Draw player hands
         text("You have $" + cardGame.playerMoney, 60, 585);
